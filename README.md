@@ -72,3 +72,9 @@ docker compose exec app php artisan migrate
 docker compose exec app php artisan db:seed
 docker compose exec app npm install
 docker compose exec app npm run dev
+
+TO DO:
+[ ] - logout unmounting bug
+[ ] - check access token TTL, implement refresh call
+[ ] - forgot password api and integration
+[ ] - forgot password email template

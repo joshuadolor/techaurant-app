@@ -15,7 +15,9 @@ export default defineConfig({
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.esm-bundler.js',
+            '@': '/resources/js'
         },
+        extensions: ['.js', '.vue', '.json']
     },
     server: {
         host: '0.0.0.0',

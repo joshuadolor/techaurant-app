@@ -8,17 +8,17 @@ services:
     ports:
       - "5173:5173"
       - "5174:5174"
-    container_name: ropadigital-app
+    container_name: laravue-boilerplate-app
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
       - ./:/var/www
     networks:
-      - ropadigital
+      - laravue
 
   nginx:
     image: nginx:1.25
-    container_name: ropadigital-nginx
+    container_name: laravue-boilerplate-nginx
     restart: unless-stopped
     ports:
       - "8000:80"
@@ -26,26 +26,26 @@ services:
       - ./:/var/www
       - ./docker/nginx:/etc/nginx/conf.d
     networks:
-      - ropadigital
+      - laravue
 
   db:
     image: mysql:8.0
-    container_name: ropadigital-db
+    container_name: laravue-boilerplate-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ropadigital
+      MYSQL_DATABASE: laravue-boilerplate
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: secret
-      MYSQL_USER: ropadigital
+      MYSQL_USER: laravue
     volumes:
       - dbdata:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
-      - ropadigital
+      - laravue
 
 networks:
-  ropadigital:
+  laravue:
     driver: bridge
 
 volumes:
