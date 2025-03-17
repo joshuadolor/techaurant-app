@@ -19,7 +19,7 @@ import { useRouter } from "vue-router";
 const authStore = useAuthStore();
 const router = useRouter();
 
-const user = computed(() => authStore.user);
+const user = computed(() => authStore.user || {});
 
 const logout = async () => {
     await authStore.logout();
