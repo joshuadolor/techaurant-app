@@ -74,7 +74,6 @@ docker compose exec app npm install
 docker compose exec app npm run dev
 
 TO DO:
-[ ] - logout unmounting bug
 [ ] - check access token TTL, implement refresh call
 [ ] - forgot password api and integration
 [ ] - forgot password email template
