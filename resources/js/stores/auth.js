@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from '@/axios';
+import AuthService from '@/services/auth';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -13,12 +13,9 @@ export const useAuthStore = defineStore('auth', {
         async login(credentials) {
             try {
                 this.isLoading = true;
-                const { data } = await axios.post("/login", credentials);
-                if (data.token) {
-                    this.setAuth(data.token, data.user);
-                    return data;
-                }
-                throw new Error('No token received');
+                const data = await AuthService.login(credentials);
+                this.setAuth(data.token, data.user);
+                return data;
             } catch (error) {
                 this.clearAuth();
                 throw error;
@@ -27,18 +24,11 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        logout() {
-            // try {
-            //     await axios.post("/logout");
-            // } catch (error) {
-            //     console.error('Logout error:', error);
-            // } finally {
+        async logout() {
+            await AuthService.logout();
             this.clearAuth();
-            // Redirect to login page after clearing auth
-            //router.push({ name: 'login' });
-            return true;
-            // }
         },
+
         setAuth(token, user) {
             this.token = token;
             this.user = user;
@@ -66,8 +56,8 @@ export const useAuthStore = defineStore('auth', {
 
         async handleSocialLogin(provider) {
             try {
-                const { data } = await axios.get(`/auth/${provider}`);
-                return data.url;
+                const { url } = await AuthService.socialLogin(provider);
+                return url;
             } catch (error) {
                 console.error(`Failed to initiate ${provider} login:`, error);
                 throw error;
@@ -79,6 +69,5 @@ export const useAuthStore = defineStore('auth', {
         getUser: (state) => state.user || {},
         getToken: (state) => state.token,
         isLoggedIn: (state) => state.isAuthenticated,
-
     }
 });

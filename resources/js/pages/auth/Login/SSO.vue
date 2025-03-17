@@ -85,42 +85,15 @@ import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 const authStore = useAuthStore();
-const socialWindow = ref(null);
 
 const handleLogin = async (provider) => {
     try {
         // Get the OAuth URL from our backend using the store
         const url = await authStore.handleSocialLogin(provider);
+        console.log(url);
         window.location.href = url;
     } catch (error) {
         console.error("Failed to initiate SSO login:", error);
     }
 };
-
-const handleSocialCallback = (event) => {
-    // Verify the origin of the message
-    if (event.origin !== window.location.origin) return;
-
-    const { token, user } = event.data;
-    if (token && user) {
-        // Store auth data in Pinia
-        authStore.setAuth(token, user);
-
-        // Close the popup
-        if (socialWindow.value) {
-            socialWindow.value.close();
-        }
-
-        // Remove the event listener
-        window.removeEventListener("message", handleSocialCallback);
-
-        // Redirect to dashboard
-        router.push("/dashboard");
-    }
-};
-
-// Cleanup on component unmount
-onUnmounted(() => {
-    window.removeEventListener("message", handleSocialCallback);
-});
 </script>

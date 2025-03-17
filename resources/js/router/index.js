@@ -11,7 +11,6 @@ const setupRouterGuards = () => {
     const authStore = useAuthStore();
 
     router.beforeEach(async (to, from, next) => {
-
         if (!authStore.isAuthenticated && !to.meta.public) {
             next({ name: "login" })
             return;

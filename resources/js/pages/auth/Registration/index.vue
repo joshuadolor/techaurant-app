@@ -33,6 +33,6 @@
 </template>
 
 <script setup>
-import RegistrationForm from "@/components/Forms/Registration.vue";
+import RegistrationForm from "@/components/Forms/Registration/index.vue";
 import SSO from "@/pages/auth/Login/SSO.vue";
 </script>

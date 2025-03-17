@@ -34,5 +34,5 @@
 
 <script setup>
 import SSO from "@/pages/auth/Login/SSO.vue";
-import LoginForm from "@/components/Forms/Login.vue";
+import LoginForm from "@/components/Forms/Login";
 </script>
