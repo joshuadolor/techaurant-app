@@ -43,6 +43,14 @@ services:
       - "3306:3306"
     networks:
       - laravue
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: laravue-boilerplate-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - laravue
 
 networks:
   laravue:
