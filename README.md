@@ -74,8 +74,9 @@ docker compose exec app npm install
 docker compose exec app npm run dev
 
 TO DO:
-[ ] - send confirm email
-[ ] - api to verify
+[ ] - apply BaseForm and BaseFormItems to FE Elements
 [ ] - check access token TTL, implement refresh call
 [ ] - forgot password api and integration
 [ ] - forgot password email template
+
+[ ] - check flow 1. registration 2. email confirmation 3. login not confirmed 4. login 5. forgot password 6. reset email

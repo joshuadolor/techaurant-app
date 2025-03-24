@@ -4,6 +4,7 @@
         :rules="rules"
         @loading="isSubmitting = $event"
         :submitForm="handleSubmit"
+        class="flex flex-col gap-2"
     >
         <BaseFormItem label="Email" prop="email">
             <el-input
@@ -14,29 +15,18 @@
             />
         </BaseFormItem>
 
-        <div class="card-actions justify-end">
-            <el-button
-                type="primary"
-                native-type="submit"
-                :loading="isSubmitting"
-                class="w-full"
-            >
-                {{
-                    isSubmitting
-                        ? "Sending reset link..."
-                        : "Send Password Reset Link"
-                }}
-            </el-button>
-        </div>
-
-        <div class="text-center mt-4">
-            <p class="text-sm">
-                Remember your password?
-                <router-link to="/login" class="link link-primary"
-                    >Login</router-link
-                >
-            </p>
-        </div>
+        <el-button
+            type="primary"
+            native-type="submit"
+            :loading="isSubmitting"
+            class="w-full"
+        >
+            {{
+                isSubmitting
+                    ? "Sending reset link..."
+                    : "Send Password Reset Link"
+            }}
+        </el-button>
     </BaseForm>
 </template>
 

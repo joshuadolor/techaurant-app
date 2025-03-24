@@ -15,6 +15,13 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                 <ForgotPasswordForm />
+
+                <p class="text-center mt-4 text-sm text-gray-600">
+                    Don't have an account?
+                    <router-link to="/login" class="link link-primary">
+                        <el-link type="primary">Login</el-link>
+                    </router-link>
+                </p>
             </div>
         </div>
     </div>

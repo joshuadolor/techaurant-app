@@ -4,23 +4,24 @@
             <h2 class="card-title justify-center text-2xl font-bold">
                 Reset Password
             </h2>
-            <el-form
+            <BaseForm
                 ref="formRef"
-                :model="form"
+                :form="form"
                 :rules="rules"
-                @submit.prevent="handleSubmit"
+                @loading="isSubmitting = $event"
+                :submitForm="handleSubmit"
                 label-position="top"
             >
-                <ElementField name="email" label="Email" :form="form">
+                <BaseFormItem label="Email" prop="email">
                     <el-input
                         v-model="form.email"
                         type="email"
                         placeholder="Enter your email"
                         :prefix-icon="Message"
                     />
-                </ElementField>
+                </BaseFormItem>
 
-                <ElementField name="password" label="New Password" :form="form">
+                <BaseFormItem label="New Password" prop="password">
                     <el-input
                         v-model="form.password"
                         type="password"
@@ -28,12 +29,11 @@
                         :prefix-icon="Lock"
                         show-password
                     />
-                </ElementField>
+                </BaseFormItem>
 
-                <ElementField
-                    name="password_confirmation"
+                <BaseFormItem
                     label="Confirm New Password"
-                    :form="form"
+                    prop="password_confirmation"
                 >
                     <el-input
                         v-model="form.password_confirmation"
@@ -42,7 +42,7 @@
                         :prefix-icon="Lock"
                         show-password
                     />
-                </ElementField>
+                </BaseFormItem>
 
                 <input type="hidden" name="token" :value="token" />
 
@@ -69,14 +69,13 @@
                         >
                     </p>
                 </div>
-            </el-form>
+            </BaseForm>
         </div>
     </div>
 </template>
 
 <script setup>
 import { reactive, ref, computed } from "vue";
-import ElementField from "../ElementField.vue";
 import { Message, Lock } from "@element-plus/icons-vue";
 import { getResetPasswordRules } from "./schema";
 import { useErrorHandler } from "@/composables/useErrorHandler";

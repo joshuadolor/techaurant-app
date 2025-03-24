@@ -42,14 +42,14 @@
             />
         </BaseFormItem>
 
-        <el-button
+        <ElButton
             type="primary"
             native-type="submit"
             class="w-full mt-4"
             :loading="isSubmitting"
         >
             Create account
-        </el-button>
+        </ElButton>
     </BaseForm>
 </template>
 
@@ -63,9 +63,9 @@ const isSubmitting = ref(false);
 const authStore = useAuthStore();
 const form = reactive({
     name: "",
-    email: "email@example.com",
-    password: "password",
-    password_confirmation: "password",
+    email: "",
+    password: "",
+    password_confirmation: "",
 });
 
 const rules = computed(() => getRules(form));
