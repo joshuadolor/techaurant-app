@@ -43,6 +43,14 @@ services:
       - "3306:3306"
     networks:
       - laravue
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: laravue-boilerplate-phpmyadmin
+    ports:
+      - "8080:80"
+    networks:
+      - laravue
   mailhog:
     image: mailhog/mailhog:latest
     container_name: laravue-boilerplate-mailhog

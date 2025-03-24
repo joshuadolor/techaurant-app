@@ -5,17 +5,26 @@ const instance = axios.create({
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
     },
     withCredentials: true
 });
 
+// Add request interceptor
 instance.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
+    // Get the CSRF token from the meta tag
+    const token = document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    } else {
-        console.log('No token found');
+        config.headers['X-XSRF-TOKEN'] = token;
     }
+
+    // Add auth token if available
+    const authToken = localStorage.getItem('token');
+    if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+    }
+
     return config;
 }, error => {
     return Promise.reject(error);
@@ -23,35 +32,36 @@ instance.interceptors.request.use(config => {
 
 // Add response interceptor
 instance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+    response => response,
+    async error => {
         const originalRequest = error.config;
+        const isLoginRequest = originalRequest.url.endsWith('/auth/login');
 
-        // Check if error is 401 (Unauthorized) and we haven't tried refreshing yet
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Only handle token refresh here
+        if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
             originalRequest._retry = true;
 
             try {
-                // Call your refresh token endpoint
                 const response = await axios.post('/api/auth/refresh', {}, {
                     withCredentials: true
                 });
 
-                // Store the new token
                 const newToken = response.data.token;
                 localStorage.setItem('token', newToken);
-
-                // Update the failed request with new token and retry
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return instance(originalRequest);
             } catch (refreshError) {
-                // If refresh fails, clear token and redirect to login
                 localStorage.removeItem('token');
-                window.location.href = '/login';
-                return Promise.reject(refreshError);
+                localStorage.removeItem('user');
+
+                if (!window.location.pathname.includes('/login')) {
+                    window.location.href = '/login';
+                }
+                throw refreshError;
             }
         }
 
+        // Let ErrorHandler.js handle all other errors
         return Promise.reject(error);
     }
 );

@@ -9,21 +9,19 @@
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                <LoginForm />
-
-                <div class="mt-6">
-                    <SSO />
+            <div
+                class="bg-white py-8 px-4 sm:rounded-lg sm:px-10 flex flex-col gap-4"
+            >
+                <div class="w-full max-w-md">
+                    <h2 class="justify-center text-2xl font-bold">Login</h2>
+                    <LoginForm />
                 </div>
-
-                <div class="mt-6">
+                <SSO />
+                <div>
                     <p class="text-center text-sm text-gray-600">
                         Don't have an account?
-                        <router-link
-                            to="/register"
-                            class="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                            Register here
+                        <router-link to="/register">
+                            <el-link type="primary">Register here</el-link>
                         </router-link>
                     </p>
                 </div>
@@ -34,5 +32,5 @@
 
 <script setup>
 import SSO from "@/pages/auth/Login/SSO.vue";
-import LoginForm from "@/components/Forms/Login";
+import LoginForm from "@/widgets/Forms/Login";
 </script>

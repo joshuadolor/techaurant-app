@@ -19,6 +19,12 @@ const routes = [
         meta: { public: true }
     },
     {
+        path: '/reset-password',
+        name: 'reset-password',
+        component: () => import('@/pages/auth/ResetPassword'),
+        meta: { public: true }
+    },
+    {
         path: '/register',
         name: 'register',
         component: Register,

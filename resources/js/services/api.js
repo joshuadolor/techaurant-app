@@ -1,5 +1,5 @@
 import axios from '@/axios';
-import { createError } from '@/utils/ErrorHandler';
+import { handleApiError } from '@/utils/ErrorHandler';
 
 class ApiService {
     async request(method, url, data = null, config = {}) {
@@ -7,8 +7,7 @@ class ApiService {
             const response = await axios[method](url, data, config);
             return response.data;
         } catch (error) {
-            const apiError = createError(error);
-            throw apiError; // Throw our custom error
+            throw handleApiError(error); // Throw our custom error
         }
     }
 

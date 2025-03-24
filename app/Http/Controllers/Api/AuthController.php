@@ -4,68 +4,157 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Exceptions\UnverifiedUserException;
+use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\AccountLockedException;
+use App\Traits\ApiResponse;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Requests\Api\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Api\Auth\ResetPasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Auth\Events\PasswordReset;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    use ApiResponse;
+
+    public function login(LoginRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ], 201);
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
         if (!Auth::attempt($request->only('email', 'password'))) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            throw new InvalidCredentialsException();
         }
 
         $user = User::where('email', $request->email)->first();
-        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
+        // Check if account is locked
+        if ($user->is_locked) {
+            throw new AccountLockedException();
+        }
+
+        // Check if email is verified
+        if (!$user->hasVerifiedEmail()) {
+            throw new UnverifiedUserException();
+        }
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return $this->successResponse([
             'token' => $token,
-        ]);
+            'user' => $user
+        ], 'Login successful');
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ]);
+        return $this->successResponse(null, 'Logged out successfully');
     }
 
-    public function user(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        return response()->json($request->user());
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return $this->successResponse(null, 'Password reset link sent to your email');
+        }
+
+        return $this->errorResponse(trans($status), 400);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $status = Password::reset(
+            $request->only('email', 'password', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return $this->successResponse(null, 'Password reset successfully');
+        }
+
+        return $this->errorResponse(trans($status), 400);
+    }
+
+    public function handleSocialCallback($provider)
+    {
+        try {
+            $user = Socialite::driver($provider)->user();
+            
+            $existingUser = User::where('email', $user->getEmail())->first();
+            
+            if ($existingUser) {
+                // Check if account is locked
+                if ($existingUser->is_locked) {
+                    throw new AccountLockedException();
+                }
+                
+                $token = $existingUser->createToken('auth-token')->plainTextToken;
+            } else {
+                $newUser = User::create([
+                    'name' => $user->getName(),
+                    'email' => $user->getEmail(),
+                    'password' => Hash::make(Str::random(24)),
+                    'email_verified_at' => now(), // Mark SSO users as verified
+                ]);
+                
+                $token = $newUser->createToken('auth-token')->plainTextToken;
+            }
+            
+            return $this->successResponse([
+                'token' => $token,
+                'user' => $existingUser ?? $newUser
+            ], 'Social login successful');
+        } catch (AccountLockedException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new InvalidCredentialsException();
+        }
+    }
+
+    /**
+     * Mark the authenticated user's email address as verified.
+     */
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return $this->successResponse(null, 'Email already verified');
+        }
+
+        if ($request->user()->markEmailAsVerified()) {
+            event(new Verified($request->user()));
+        }
+
+        return $this->successResponse(null, 'Email verified successfully');
+    }
+
+    /**
+     * Resend the email verification notification.
+     */
+    public function resendVerificationEmail(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return $this->successResponse(null, 'Email already verified');
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return $this->successResponse(null, 'Verification link sent');
     }
 } 
