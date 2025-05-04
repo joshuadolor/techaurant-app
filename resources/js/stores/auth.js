@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import AuthService from '@/services/auth';
 import AccountService from "@/services/account";
+import { AccountNotVerifiedError } from '@/utils/ErrorHandler';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -30,14 +31,19 @@ export const useAuthStore = defineStore('auth', {
         async login(credentials) {
             try {
                 const response = await AuthService.login(credentials);
-                this.user = response.data.user;
+                const { user, token } = response.data;
+
+                this.user = user;
                 this.isAuthenticated = true;
-                localStorage.setItem("token", response.data.token);
-                this.setAlert("Login successful!");
+                localStorage.setItem("token", token);
                 return response;
             } catch (error) {
-                console.log(error);
-                this.setAlert(error.response?.data?.message || "Login failed", "error");
+                if (error instanceof AccountNotVerifiedError) {
+                    const { user, token } = error.data;
+                    this.user = user;
+                    this.isAuthenticated = true;
+                    localStorage.setItem("token", token);
+                }
                 throw error;
             }
         },

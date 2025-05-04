@@ -51,6 +51,11 @@ const routes = [
         name: 'dashboard',
         component: () => import('@/pages/Dashboard'),
     },
+    {
+        path: '/email/resend-verification',
+        name: 'resend-verification',
+        component: () => import('@/pages/auth/VerifyEmail/resend'),
+    },
 ]
 
 export default routes;

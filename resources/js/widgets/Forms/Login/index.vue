@@ -53,6 +53,7 @@ import { reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { Message, Lock } from "@element-plus/icons-vue";
+import { AccountNotVerifiedError } from "@/utils/ErrorHandler";
 import { getRules } from "./schema";
 
 const router = useRouter();
@@ -68,7 +69,16 @@ const form = reactive({
 const rules = computed(() => getRules());
 
 const handleSubmit = async (values) => {
-    await authStore.login(values);
-    router.push("/dashboard");
+    try {
+        await authStore.login(values);
+        router.push("/dashboard");
+    } catch (error) {
+        console.log(error instanceof AccountNotVerifiedError);
+        if (error instanceof AccountNotVerifiedError) {
+            router.replace({ name: "resend-verification" });
+        } else {
+            throw error;
+        }
+    }
 };
 </script>

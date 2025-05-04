@@ -58,6 +58,7 @@ onMounted(async () => {
         try {
             await authStore.verifyEmail({ id, hash });
             notify.success("Email verified successfully! You can now log in.");
+            router.replace({ name: "login" });
         } catch (error) {
             notify.error(
                 error.response?.data?.message || "Failed to verify email"
@@ -65,7 +66,6 @@ onMounted(async () => {
             hasFailedVerification.value = true;
         }
     }
-    router.replace({ name: "login" });
 });
 
 const hasNeededParams = computed(() => {

@@ -1,5 +1,4 @@
 import { notify } from "@/utils/notification";
-
 export class ApiError extends Error {
     constructor(error) {
         super(error.message);
@@ -35,9 +34,10 @@ export class UnauthorizedError extends Error {
 }
 
 export class AccountNotVerifiedError extends Error {
-    constructor(message = 'Account not verified') {
+    constructor(message = 'Account not verified', data = {}) {
         super(message);
         this.name = 'AccountNotVerifiedError';
+        this.data = data;
         notify.warning({
             title: 'Account not verified',
             message: this.message,
@@ -81,7 +81,7 @@ export class ForbiddenError extends Error {
 export function handleApiError(error) {
     if (error.response) {
         const { data, status } = error.response;
-        const { code, message } = data?.data || {};
+        const { code = 0, message } = data?.data || {};
         // Handle validation errors
         if (status === 422 && data.errors) {
             throw new ValidationError(data.errors);
@@ -93,9 +93,8 @@ export function handleApiError(error) {
         }
 
         if (status === 403) {
-            console.log(code)
             if (code === 101) {
-                throw new AccountNotVerifiedError(data.message);
+                throw new AccountNotVerifiedError(data.message, data.data);
             }
             throw new ForbiddenError(data.message);
         }

@@ -38,17 +38,18 @@ class AuthController extends Controller
             throw new AccountLockedException();
         }
 
-        // Check if email is verified
-        if (!$user->hasVerifiedEmail()) {
-            throw new UnverifiedUserException();
-        }
-
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return $this->successResponse([
+        $data = [
             'token' => $token,
             'user' => $user
-        ], 'Login successful');
+        ];
+
+        if (!$user->hasVerifiedEmail()) {
+            throw new UnverifiedUserException('', $data);
+        }
+
+        return $this->successResponse($data, 'Login successful');
     }
 
     public function logout(Request $request)
@@ -96,15 +97,15 @@ class AuthController extends Controller
     {
         try {
             $user = Socialite::driver($provider)->user();
-            
+
             $existingUser = User::where('email', $user->getEmail())->first();
-            
+
             if ($existingUser) {
                 // Check if account is locked
                 if ($existingUser->is_locked) {
                     throw new AccountLockedException();
                 }
-                
+
                 $token = $existingUser->createToken('auth-token')->plainTextToken;
             } else {
                 $newUser = User::create([
@@ -113,10 +114,10 @@ class AuthController extends Controller
                     'password' => Hash::make(Str::random(24)),
                     'email_verified_at' => now(), // Mark SSO users as verified
                 ]);
-                
+
                 $token = $newUser->createToken('auth-token')->plainTextToken;
             }
-            
+
             return $this->successResponse([
                 'token' => $token,
                 'user' => $existingUser ?? $newUser
@@ -133,7 +134,7 @@ class AuthController extends Controller
      */
     public function verifyEmail(EmailVerificationRequest $request)
     {
-        dd('reached here');
+        \Log::info('reached here');
         if ($request->user()->hasVerifiedEmail()) {
             return $this->successResponse(null, 'Email already verified');
         }
@@ -159,4 +160,4 @@ class AuthController extends Controller
 
         return $this->successResponse(null, 'Verification link sent');
     }
-} 
+}
