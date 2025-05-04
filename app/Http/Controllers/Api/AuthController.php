@@ -133,13 +133,15 @@ class AuthController extends Controller
      */
     public function verifyEmail(EmailVerificationRequest $request)
     {
+        dd('reached here');
         if ($request->user()->hasVerifiedEmail()) {
             return $this->successResponse(null, 'Email already verified');
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        }
+        // if ($request->user()->markEmailAsVerified()) {
+        //     event(new Verified($request->user()));
+        // }
+        $request->user()->markEmailAsVerified();
 
         return $this->successResponse(null, 'Email verified successfully');
     }

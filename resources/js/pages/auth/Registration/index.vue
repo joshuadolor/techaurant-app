@@ -20,7 +20,9 @@
                 </div>
                 <SSO />
                 <div>
-                    <p class="text-center text-sm text-gray-600">
+                    <p
+                        class="flex gap-2 justify-center items-center text-sm text-gray-600"
+                    >
                         Already have an account?
                         <router-link to="/login">
                             <el-link type="primary">Login </el-link>

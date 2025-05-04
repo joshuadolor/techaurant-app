@@ -18,7 +18,9 @@
                 </div>
                 <SSO />
                 <div>
-                    <p class="text-center text-sm text-gray-600">
+                    <p
+                        class="flex items-center justify-center gap-2 text-sm text-gray-600"
+                    >
                         Don't have an account?
                         <router-link to="/register">
                             <el-link type="primary">Register here</el-link>

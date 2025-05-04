@@ -58,19 +58,27 @@ import { reactive, ref, computed } from "vue";
 import { User, Message, Lock } from "@element-plus/icons-vue";
 import { getRules } from "./schema";
 import { useAuthStore } from "@/stores/auth";
+import { notify } from "@/utils/notification";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const isSubmitting = ref(false);
 const authStore = useAuthStore();
 const form = reactive({
-    name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
+    name: "Juan Tamad",
+    email: "juan@tamad.com",
+    password: "password",
+    password_confirmation: "password",
 });
 
 const rules = computed(() => getRules(form));
 
 const handleSubmit = async (values) => {
     await authStore.register(values);
+    notify.success(
+        "Registration successful! Please check your email for verification link."
+    );
+    router.replace({ name: "login" });
 };
 </script>

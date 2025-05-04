@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', {
                 this.setAlert("Login successful!");
                 return response;
             } catch (error) {
+                console.log(error);
                 this.setAlert(error.response?.data?.message || "Login failed", "error");
                 throw error;
             }

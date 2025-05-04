@@ -29,14 +29,14 @@ class UserController extends Controller
         ]);
 
         // Dispatch the event
-        event(new UserHasRegistered($user));
+        //event(new UserHasRegistered($user));
 
         $user->sendEmailVerificationNotification();
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        // $token = $user->createToken('auth-token')->plainTextToken;
 
         return $this->successResponse([
-            'token' => $token,
+            // 'token' => $token,
             'user' => $user
         ], 'Registration successful', 201);
     }

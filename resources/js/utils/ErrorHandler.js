@@ -1,3 +1,5 @@
+import { notify } from "@/utils/notification";
+
 export class ApiError extends Error {
     constructor(error) {
         super(error.message);
@@ -25,6 +27,21 @@ export class UnauthorizedError extends Error {
     constructor(message = 'Unauthorized') {
         super(message);
         this.name = 'UnauthorizedError';
+        notify.warning({
+            message: this.message,
+            type: 'error',
+        });
+    }
+}
+
+export class AccountNotVerifiedError extends Error {
+    constructor(message = 'Account not verified') {
+        super(message);
+        this.name = 'AccountNotVerifiedError';
+        notify.warning({
+            title: 'Account not verified',
+            message: this.message,
+        });
     }
 }
 
@@ -32,13 +49,10 @@ export class ServerError extends Error {
     constructor(message = 'Server error') {
         super(message);
         this.name = 'ServerError';
-    }
-}
-
-export class UnverifiedUserError extends Error {
-    constructor(message = 'Email not verified') {
-        super(message);
-        this.name = 'UnverifiedUserError';
+        notify.error({
+            title: 'Server error',
+            message: this.message || 'An error occurred',
+        });
     }
 }
 
@@ -46,12 +60,28 @@ export class AccountLockedError extends Error {
     constructor(message = 'Account is locked') {
         super(message);
         this.name = 'AccountLockedError';
+        notify.warning({
+            title: 'Account locked',
+            message: this.message,
+        });
+    }
+}
+
+export class ForbiddenError extends Error {
+    constructor(message = 'Forbidden') {
+        super(message);
+        this.name = 'ForbiddenError';
+        notify.warning({
+            title: 'Forbidden',
+            message: this.message,
+        });
     }
 }
 
 export function handleApiError(error) {
     if (error.response) {
         const { data, status } = error.response;
+        const { code, message } = data?.data || {};
         // Handle validation errors
         if (status === 422 && data.errors) {
             throw new ValidationError(data.errors);
@@ -60,6 +90,14 @@ export function handleApiError(error) {
         // Handle unauthorized errors
         if (status === 401) {
             throw new UnauthorizedError(data.message);
+        }
+
+        if (status === 403) {
+            console.log(code)
+            if (code === 101) {
+                throw new AccountNotVerifiedError(data.message);
+            }
+            throw new ForbiddenError(data.message);
         }
 
         // Handle server errors

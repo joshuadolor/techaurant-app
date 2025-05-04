@@ -78,5 +78,5 @@ TO DO:
 [ ] - check access token TTL, implement refresh call
 [ ] - forgot password api and integration
 [ ] - forgot password email template
-
+[ ] - improve email verification, remove id dependency
 [ ] - check flow 1. registration 2. email confirmation 3. login not confirmed 4. login 5. forgot password 6. reset email

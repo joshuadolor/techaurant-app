@@ -34,14 +34,7 @@ class VerifyEmailNotification extends VerifyEmail
             'hash' => sha1($notifiable->getEmailForVerification()),
         ];
 
-        $url = URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            $params
-        );
-
-        // Convert the URL to point to our frontend
-        return $frontendUrl . '/verify-email?' . http_build_query($params);
+        return $frontendUrl . '/email/verify/' . $params['id'] . '/' . $params['hash'];
     }
 
     /**

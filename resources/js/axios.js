@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { publicRoutes } from '@/router/routes';
 
 const instance = axios.create({
     baseURL: '/api',
@@ -36,6 +37,13 @@ instance.interceptors.response.use(
     async error => {
         const originalRequest = error.config;
         const isLoginRequest = originalRequest.url.endsWith('/auth/login');
+        // Skip token refresh for public routes
+
+        if (
+            publicRoutes.map(e => e.path)
+                .some(route => originalRequest.url.endsWith(route))) {
+            return Promise.reject(error);
+        }
 
         // Only handle token refresh here
         if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {

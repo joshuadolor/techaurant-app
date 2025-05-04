@@ -1,7 +1,7 @@
 import Login from '@/pages/auth/Login'
 import Register from '@/pages/auth/Registration'
 
-const routes = [
+export const publicRoutes = [
     {
         path: '/',
         redirect: '/login'
@@ -37,10 +37,20 @@ const routes = [
         meta: { public: true }
     },
     {
+        path: '/email/verify/:id/:hash',
+        name: 'verify-email',
+        component: () => import('@/pages/auth/VerifyEmail'),
+        meta: { public: true }
+    },
+]
+
+const routes = [
+    ...publicRoutes,
+    {
         path: '/dashboard',
         name: 'dashboard',
         component: () => import('@/pages/Dashboard'),
-    }
+    },
 ]
 
 export default routes;
