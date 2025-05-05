@@ -11,6 +11,7 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
+    Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
     // Social authentication routes
     Route::get('{provider}', [SocialAuthController::class, 'redirect']);
@@ -24,6 +25,9 @@ Route::prefix('auth')->group(function () {
         Route::post('email/verification-notification', [AuthController::class, 'resendVerificationEmail'])
             ->middleware('throttle:6,1')
             ->name('verification.send');
+
+
+        // User routes
     });
 
     Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])

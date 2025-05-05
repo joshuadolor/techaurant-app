@@ -4,7 +4,9 @@ import Register from '@/pages/auth/Registration'
 export const publicRoutes = [
     {
         path: '/',
-        redirect: '/login'
+        redirect: '/login',
+        meta: { public: true }
+
     },
     {
         path: '/login',
@@ -55,6 +57,13 @@ const routes = [
         path: '/email/resend-verification',
         name: 'resend-verification',
         component: () => import('@/pages/auth/VerifyEmail/resend'),
+    },
+    {
+        path: '/sample',
+        name: 'sample',
+        component: {
+            template: '<h1>Sample Page</h1>'
+        },
     },
 ]
 

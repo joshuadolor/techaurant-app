@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import AuthService from '@/services/auth';
 import AccountService from "@/services/account";
 import { AccountNotVerifiedError } from '@/utils/ErrorHandler';
+import User from '@/models/User';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -27,22 +28,22 @@ export const useAuthStore = defineStore('auth', {
                 this.alert.show = false;
             }, 3000);
         },
+        setAuthState(user, token) {
+            this.user = new User(user);
+            this.isAuthenticated = true;
+            localStorage.setItem("token", token);
+        },
 
         async login(credentials) {
             try {
                 const response = await AuthService.login(credentials);
                 const { user, token } = response.data;
-
-                this.user = user;
-                this.isAuthenticated = true;
-                localStorage.setItem("token", token);
+                this.setAuthState(user, token);
                 return response;
             } catch (error) {
                 if (error instanceof AccountNotVerifiedError) {
                     const { user, token } = error.data;
-                    this.user = user;
-                    this.isAuthenticated = true;
-                    localStorage.setItem("token", token);
+                    this.setAuthState(user, token);
                 }
                 throw error;
             }
@@ -110,8 +111,8 @@ export const useAuthStore = defineStore('auth', {
 
         async fetchUser() {
             try {
-                const { data } = await axios.get('/me');
-                this.user = data;
+                const { data } = await AuthService.me();
+                this.user = new User(data);
             } catch (error) {
                 this.clearAuth();
                 throw error;

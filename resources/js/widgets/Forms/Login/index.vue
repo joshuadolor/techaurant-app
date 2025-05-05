@@ -71,14 +71,9 @@ const rules = computed(() => getRules());
 const handleSubmit = async (values) => {
     try {
         await authStore.login(values);
-        router.push("/dashboard");
+        router.replace("/dashboard");
     } catch (error) {
-        console.log(error instanceof AccountNotVerifiedError);
-        if (error instanceof AccountNotVerifiedError) {
-            router.replace({ name: "resend-verification" });
-        } else {
-            throw error;
-        }
+        router.replace("/dashboard");
     }
 };
 </script>

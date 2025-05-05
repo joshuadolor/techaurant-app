@@ -160,4 +160,11 @@ class AuthController extends Controller
 
         return $this->successResponse(null, 'Verification link sent');
     }
+
+    public function me(Request $request)
+    {
+        $user = $request->user();
+
+        return $this->successResponse($user, 'User fetched successfully');
+    }
 }

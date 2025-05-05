@@ -29,6 +29,10 @@ class AuthService {
     async resetPassword(data) {
         return ApiService.post(`${API_URL}/reset-password`, data);
     }
+
+    async me() {
+        return ApiService.get(`${API_URL}/me`);
+    }
 }
 
 export default new AuthService(); 
