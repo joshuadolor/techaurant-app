@@ -12,11 +12,17 @@ const setupRouterGuards = () => {
 
     router.beforeEach(async (to, from, next) => {
         const isResendVerification = to.name === "resend-verification";
+        const isVerifyEmail = to.name === "verify-email";
         const isDashboard = to.name === "dashboard";
 
         // 1. Not authenticated and route is not public: redirect to login
         if (!authStore.isAuthenticated && !to.meta.public) {
             next({ name: "login" });
+            return;
+        }
+
+        if (isVerifyEmail) {
+            next();
             return;
         }
 
