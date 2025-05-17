@@ -7,7 +7,7 @@ const validatePasswordConfirmation = (rule, value, callback, form) => {
     }
 }
 
-export const getResetPasswordRules = (form) => ({
+export const getRules = (form) => ({
     email: [
         { required: true, message: 'Email is required', trigger: 'blur' },
         { type: 'email', message: 'Please enter a valid email', trigger: 'blur' }
@@ -21,5 +21,3 @@ export const getResetPasswordRules = (form) => ({
         { validator: (rule, value, callback) => validatePasswordConfirmation(rule, value, callback, form), trigger: 'blur' }
     ]
 })
-
-export default schema; 

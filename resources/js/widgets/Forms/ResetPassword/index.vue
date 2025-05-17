@@ -1,127 +1,90 @@
 <template>
-    <div class="card w-full max-w-md bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h2 class="card-title justify-center text-2xl font-bold">
-                Reset Password
-            </h2>
-            <BaseForm
-                ref="formRef"
-                :form="form"
-                :rules="rules"
-                @loading="isSubmitting = $event"
-                :submitForm="handleSubmit"
-                label-position="top"
+    <BaseForm
+        :form="form"
+        :rules="rules"
+        @loading="isSubmitting = $event"
+        :submitForm="handleSubmit"
+        label-position="top"
+    >
+        <BaseFormItem label="Email" prop="email">
+            <el-input
+                v-model="form.email"
+                type="email"
+                placeholder="Enter your email"
+                :prefix-icon="Message"
+                readonly
+            />
+        </BaseFormItem>
+
+        <BaseFormItem label="New Password" prop="password">
+            <el-input
+                v-model="form.password"
+                type="password"
+                placeholder="Enter your new password"
+                :prefix-icon="Lock"
+                show-password
+            />
+        </BaseFormItem>
+
+        <BaseFormItem label="Confirm New Password" prop="password_confirmation">
+            <el-input
+                v-model="form.password_confirmation"
+                type="password"
+                placeholder="Confirm your new password"
+                :prefix-icon="Lock"
+                show-password
+            />
+        </BaseFormItem>
+
+        <div class="card-actions justify-end">
+            <el-button
+                type="primary"
+                native-type="submit"
+                :loading="isSubmitting"
+                class="w-full"
             >
-                <BaseFormItem label="Email" prop="email">
-                    <el-input
-                        v-model="form.email"
-                        type="email"
-                        placeholder="Enter your email"
-                        :prefix-icon="Message"
-                    />
-                </BaseFormItem>
-
-                <BaseFormItem label="New Password" prop="password">
-                    <el-input
-                        v-model="form.password"
-                        type="password"
-                        placeholder="Enter your new password"
-                        :prefix-icon="Lock"
-                        show-password
-                    />
-                </BaseFormItem>
-
-                <BaseFormItem
-                    label="Confirm New Password"
-                    prop="password_confirmation"
-                >
-                    <el-input
-                        v-model="form.password_confirmation"
-                        type="password"
-                        placeholder="Confirm your new password"
-                        :prefix-icon="Lock"
-                        show-password
-                    />
-                </BaseFormItem>
-
-                <input type="hidden" name="token" :value="token" />
-
-                <div class="card-actions justify-end">
-                    <el-button
-                        type="primary"
-                        native-type="submit"
-                        :loading="isSubmitting"
-                        class="w-full"
-                    >
-                        {{
-                            isSubmitting
-                                ? "Resetting Password..."
-                                : "Reset Password"
-                        }}
-                    </el-button>
-                </div>
-
-                <div class="text-center mt-4">
-                    <p class="text-sm">
-                        Remember your password?
-                        <router-link to="/login" class="link link-primary"
-                            >Login</router-link
-                        >
-                    </p>
-                </div>
-            </BaseForm>
+                {{ isSubmitting ? "Resetting Password..." : "Reset Password" }}
+            </el-button>
         </div>
-    </div>
+    </BaseForm>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, watch } from "vue";
 import { Message, Lock } from "@element-plus/icons-vue";
-import { getResetPasswordRules } from "./schema";
-import { useErrorHandler } from "@/composables/useErrorHandler";
+import { getRules } from "./schema";
 import AccountService from "@/services/account";
+import { useRouter } from "vue-router";
+import { notify } from "@/utils/notification";
 
-const { handleError } = useErrorHandler();
+const router = useRouter();
 
-const props = defineProps({
-    token: {
-        type: String,
-        required: true,
-    },
-});
-
-const formRef = ref(null);
 const isSubmitting = ref(false);
 const form = reactive({
     email: "",
-    password: "",
-    password_confirmation: "",
+    password: "123123123",
+    password_confirmation: "123123123",
+    token: "",
     errors: {},
 });
 
-const rules = computed(() => getResetPasswordRules(form));
-
-const handleSubmit = async () => {
-    try {
-        const valid = await formRef.value.validate();
-        if (valid) {
-            isSubmitting.value = true;
-            await AccountService.resetPassword({
-                email: form.email,
-                password: form.password,
-                password_confirmation: form.password_confirmation,
-                token: props.token,
-            });
-            // Show success message
-            window.location.href =
-                "/login?message=Password has been reset successfully";
+watch(
+    () => router.currentRoute.value.query,
+    ({ email, token }) => {
+        if (!email || !token) {
+            router.replace({ name: "login" });
         }
-    } catch (error) {
-        handleError(error, { setValidationErrors: form.errors });
-    } finally {
-        isSubmitting.value = false;
-    }
-};
+        form.email = email;
+        form.token = token;
+    },
+    { immediate: true }
+);
 
-const emit = defineEmits(["submit"]);
+const rules = computed(() => getRules(form));
+
+const handleSubmit = async (values) => {
+    const data = await AccountService.resetPassword(values);
+    notify.success(data.message);
+    router.replace({ name: "login" });
+};
 </script>

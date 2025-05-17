@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\Auth;
+namespace App\Http\Requests\Api\Account;
 
 use App\Http\Requests\Api\BaseFormRequest;
 
@@ -14,7 +14,7 @@ class ForgotPasswordRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
+            'email' => 'required|string|email|max:255',
         ];
     }
 
@@ -25,9 +25,6 @@ class ForgotPasswordRequest extends BaseFormRequest
      */
     public function messages(): array
     {
-        return [
-            'email.required' => 'Email is required',
-            'email.email' => 'Please enter a valid email address',
-        ];
+        return [];
     }
-} 
+}

@@ -16,7 +16,9 @@
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                 <ForgotPasswordForm />
 
-                <p class="text-center mt-4 text-sm text-gray-600">
+                <p
+                    class="flex items-center justify-center gap-2 text-center mt-4 text-sm text-gray-600"
+                >
                     Don't have an account?
                     <router-link to="/login" class="link link-primary">
                         <el-link type="primary">Login</el-link>

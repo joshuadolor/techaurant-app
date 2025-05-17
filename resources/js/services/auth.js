@@ -18,14 +18,6 @@ class AuthService {
         return await ApiService.post(`${API_URL}/email/verification-notification`)
     }
 
-    async verifyEmail({ id, hash }) {
-        return await ApiService.get(`${API_URL}/verify-email/${id}/${hash}`)
-    }
-
-    async forgotPassword(email) {
-        return ApiService.post(`${API_URL}/forgot-password`, { email });
-    }
-
     async resetPassword(data) {
         return ApiService.post(`${API_URL}/reset-password`, data);
     }
@@ -40,6 +32,10 @@ class AuthService {
 
     async logout() {
         return ApiService.get(`${API_URL}/logout`);
+    }
+
+    async verifyEmail({ id, hash }) {
+        return await ApiService.get(`${API_URL}/verify-email/${id}/${hash}`)
     }
 }
 

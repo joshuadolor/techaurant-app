@@ -82,6 +82,14 @@ export function handleApiError(error) {
     if (error.response) {
         const { data, status } = error.response;
         const { code = 0, message } = data?.data || {};
+
+        if (status === 400) {
+            notify.error({
+                title: 'Bad Request',
+                message: data?.message,
+            });
+        }
+
         // Handle validation errors
         if (status === 422 && data.errors) {
             throw new ValidationError(data.errors);

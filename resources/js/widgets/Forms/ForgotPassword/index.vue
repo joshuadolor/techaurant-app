@@ -35,15 +35,22 @@ import { reactive, ref, computed } from "vue";
 import { Message } from "@element-plus/icons-vue";
 import { getRules } from "./schema";
 import AccountService from "@/services/account";
+import { notify } from "@/utils/notification";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const isSubmitting = ref(false);
 const form = reactive({
-    email: "",
+    email: "juan@tamad.com",
 });
 
 const rules = computed(() => getRules());
 
-const handleSubmit = async () => {
-    await AccountService.forgotPassword({ email: form.email });
+const handleSubmit = async (values) => {
+    const data = await AccountService.forgotPassword(values);
+    console.log(data);
+    notify.success(data.message);
+    router.replace({ name: "login" });
 };
 </script>

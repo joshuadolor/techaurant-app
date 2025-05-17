@@ -41,7 +41,6 @@ export const useAuthStore = defineStore('auth', {
         async register(userData) {
             try {
                 const response = await AccountService.register(userData);
-                this.setAlert("Registration successful! Please check your email to verify your account.");
                 return response;
             } catch (error) {
                 this.setAlert(error.response?.data?.message || "Registration failed", "error");
@@ -52,7 +51,6 @@ export const useAuthStore = defineStore('auth', {
         async forgotPassword(email) {
             try {
                 const response = await AccountService.forgotPassword({ email });
-                this.setAlert("Password reset link has been sent to your email.");
                 return response;
             } catch (error) {
                 this.setAlert(error.response?.data?.message || "Failed to send reset link", "error");
@@ -63,7 +61,6 @@ export const useAuthStore = defineStore('auth', {
         async resetPassword(data) {
             try {
                 const response = await AccountService.resetPassword(data);
-                this.setAlert("Password has been reset successfully!");
                 return response;
             } catch (error) {
                 this.setAlert(error.response?.data?.message || "Failed to reset password", "error");

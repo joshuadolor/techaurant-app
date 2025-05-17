@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\Auth;
+namespace App\Http\Requests\Api\Account;
 
 use App\Http\Requests\Api\BaseFormRequest;
 
@@ -36,4 +36,4 @@ class ResetPasswordRequest extends BaseFormRequest
             'password.confirmed' => 'Password confirmation does not match',
         ];
     }
-} 
+}

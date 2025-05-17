@@ -14,6 +14,16 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                 <ResetPasswordForm />
+                <div class="text-center mt-4">
+                    <p
+                        class="flex gap-2 justify-center items-center text-sm text-gray-600"
+                    >
+                        Remembered your password?
+                        <router-link to="/login">
+                            <el-link type="primary">Login </el-link>
+                        </router-link>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

@@ -1,21 +1,25 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\SocialAuthController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
+Route::prefix('account')->group(function () {
+    Route::post('forgot-password', [AccountController::class, 'forgotPassword']);
+    Route::post('reset-password', [AccountController::class, 'resetPassword']);
+});
+
 Route::prefix('auth')->group(function () {
     // Authentication routes
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('reset-password', [AuthController::class, 'resetPassword']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::get('logout', [AuthController::class, 'logout']);
     });
 
+    Route::post('login', [AuthController::class, 'login']);
     Route::post('refresh', [AuthController::class, 'refresh'])
         ->name('refresh');
 
