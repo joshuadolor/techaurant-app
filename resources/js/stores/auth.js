@@ -16,8 +16,6 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         setAlert(message, type = "success") {
             notify[type](message);
-
-
         },
         setAuthState(user, token) {
             this.user = new User(user);
