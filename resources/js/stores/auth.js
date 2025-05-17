@@ -84,7 +84,8 @@ export const useAuthStore = defineStore('auth', {
 
         async logout() {
             try {
-                await AccountService.logout();
+                // TODO: Uncomment this when the backend is ready or will this really be needed?
+                // await AccountService.logout();
                 this.user = null;
                 this.isAuthenticated = false;
                 localStorage.removeItem("token");

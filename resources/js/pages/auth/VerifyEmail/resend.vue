@@ -28,9 +28,9 @@
                         class="flex justify-center gap-2 items-center text-sm text-gray-600"
                     >
                         Already verified?
-                        <router-link to="/login">
-                            <el-link type="primary">Login here</el-link>
-                        </router-link>
+                        <el-link @click.prevent="logout" type="primary"
+                            >Login here</el-link
+                        >
                     </p>
                 </div>
             </div>
@@ -67,6 +67,11 @@ onMounted(async () => {
         }
     }
 });
+
+const logout = () => {
+    authStore.logout();
+    router.replace({ name: "login" });
+};
 
 const hasNeededParams = computed(() => {
     const { id, hash } = route.params;
