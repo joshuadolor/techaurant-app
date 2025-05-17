@@ -25,26 +25,29 @@ class SocialAuthController extends Controller
             $socialUser = Socialite::driver($provider)
                 ->stateless()
                 ->user();
-            
+
             $user = User::updateOrCreate([
                 'email' => $socialUser->email,
             ], [
                 'name' => $socialUser->name,
                 'password' => bcrypt(Str::random(16)),
-                $provider.'_id' => $socialUser->id,
+                $provider . '_id' => $socialUser->id,
             ]);
 
+            if (!$user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
+
             Auth::login($user);
-            
+
             // Create token for API authentication
             $token = $user->createToken('auth_token')->plainTextToken;
-            
+
             return response()->json([
                 'user' => $user,
                 'token' => $token,
                 'status' => 'success'
             ]);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Authentication failed',
@@ -52,4 +55,4 @@ class SocialAuthController extends Controller
             ], 422);
         }
     }
-} 
+}

@@ -27,12 +27,11 @@ onMounted(async () => {
         const response = await axios.get(
             `/auth/${provider}/callback${window.location.search}`
         );
-        console.log(response);
 
         // Store the token and user data
         if (response.data.token) {
             const { token, user } = response.data;
-            authStore.setAuth(token, user);
+            authStore.setAuthState(user, token);
 
             // Redirect to dashboard
             router.replace({ name: "dashboard" });
