@@ -48,13 +48,18 @@ instance.interceptors.response.use(
         // Only handle token refresh here
         if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
             originalRequest._retry = true;
+            // Get the current token from localStorage
+            const currentToken = localStorage.getItem('token');
 
             try {
                 const response = await axios.post('/api/auth/refresh', {}, {
-                    withCredentials: true
+                    withCredentials: true,
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
                 });
 
-                const newToken = response.data.token;
+                const newToken = response.data.data.token;
                 localStorage.setItem('token', newToken);
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return instance(originalRequest);

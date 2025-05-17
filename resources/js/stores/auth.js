@@ -91,11 +91,14 @@ export const useAuthStore = defineStore('auth', {
                 this.isAuthenticated = true;
                 return response;
             } catch (error) {
-                this.user = null;
-                this.isAuthenticated = false;
-                localStorage.removeItem("token");
-                throw error;
+                this.clearAuth();
             }
+        },
+
+        clearAuth() {
+            this.user = null;
+            this.isAuthenticated = false;
+            localStorage.removeItem("token");
         },
 
         async fetchUser() {
@@ -125,6 +128,13 @@ export const useAuthStore = defineStore('auth', {
         async verifyEmail({ id, hash }) {
             return await AuthService.verifyEmail({ id, hash })
         },
+
+        async refresh() {
+            const response = await AuthService.refresh();
+            const { user, token } = response.data;
+            this.setAuthState(user, token);
+            return response;
+        }
     },
 
     getters: {

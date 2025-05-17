@@ -34,6 +34,10 @@ class AuthService {
         return ApiService.get(`${API_URL}/me`);
     }
 
+    async refresh() {
+        return ApiService.post(`${API_URL}/refresh`);
+    }
+
     async logout() {
         return ApiService.get(`${API_URL}/logout`);
     }

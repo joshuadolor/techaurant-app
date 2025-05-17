@@ -11,8 +11,13 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
-    Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
-    Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('me', [AuthController::class, 'me']);
+        Route::get('logout', [AuthController::class, 'logout']);
+    });
+
+    Route::post('refresh', [AuthController::class, 'refresh'])
+        ->name('refresh');
 
     // Social authentication routes
     Route::get('{provider}', [SocialAuthController::class, 'redirect']);

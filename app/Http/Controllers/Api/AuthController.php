@@ -20,6 +20,9 @@ use Illuminate\Auth\Events\PasswordReset;
 use Laravel\Socialite\Facades\Socialite;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use App\Enums\TokenAbility;
+use Illuminate\Http\JsonResponse;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -37,19 +40,48 @@ class AuthController extends Controller
         if ($user->is_locked) {
             throw new AccountLockedException();
         }
-
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $tokens = $this->generateTokens($user);
 
         $data = [
-            'token' => $token,
-            'user' => $user
+            'user' => $user,
+            'token' => $tokens['accessToken']
         ];
 
         if (!$user->hasVerifiedEmail()) {
             throw new UnverifiedUserException('', $data);
         }
 
-        return $this->successResponse($data, 'Login successful');
+        return $this->sendResponseWithTokens($tokens, ['user' => $user]);
+    }
+
+    /**
+     * @return array{
+     *     accessToken: string,
+     *     refreshToken: string,
+     * }
+     */
+    public function generateTokens($user): array
+    {
+        $atExpireTime = now()->addMinutes(config('sanctum.expiration'));
+        $rtExpireTime = now()->addMinutes(config('sanctum.refresh_token_expiration'));
+
+        $accessToken = $user->createToken('access_token', [TokenAbility::ACCESS_API], $atExpireTime);
+        $refreshToken = $user->createToken('refresh_token', [TokenAbility::ISSUE_ACCESS_TOKEN], $rtExpireTime);
+
+        return [
+            'accessToken' => $accessToken->plainTextToken,
+            'refreshToken' => $refreshToken->plainTextToken,
+        ];
+    }
+
+    private function sendResponseWithTokens(array $tokens, $body = []): JsonResponse
+    {
+        $rtExpireTime = config('sanctum.refresh_token_expiration');
+        $cookie = cookie('refreshToken', $tokens['refreshToken'], $rtExpireTime, secure: true);
+
+        return $this->successResponse(array_merge($body, [
+            'token' => $tokens['accessToken']
+        ]))->withCookie($cookie);
     }
 
     public function logout(Request $request)
@@ -105,8 +137,6 @@ class AuthController extends Controller
                 if ($existingUser->is_locked) {
                     throw new AccountLockedException();
                 }
-
-                $token = $existingUser->createToken('auth-token')->plainTextToken;
             } else {
                 $newUser = User::create([
                     'name' => $user->getName(),
@@ -114,14 +144,11 @@ class AuthController extends Controller
                     'password' => Hash::make(Str::random(24)),
                     'email_verified_at' => now(), // Mark SSO users as verified
                 ]);
-
-                $token = $newUser->createToken('auth-token')->plainTextToken;
             }
+            $currentUser = $existingUser ?? $newUser;
+            $tokens = $this->generateTokens($currentUser);
 
-            return $this->successResponse([
-                'token' => $token,
-                'user' => $existingUser ?? $newUser
-            ], 'Social login successful');
+            return $this->sendResponseWithTokens($tokens, ['user' => $currentUser]);
         } catch (AccountLockedException $e) {
             throw $e;
         } catch (\Exception $e) {
@@ -176,5 +203,28 @@ class AuthController extends Controller
         $user = $request->user();
 
         return $this->successResponse($user, 'User fetched successfully');
+    }
+
+    public function refresh(Request $request)
+    {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Find the token in the database
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if (!$accessToken) {
+            return response()->json(['message' => 'Invalid token'], 401);
+        }
+
+        $user = $accessToken->tokenable;
+
+        // Revoke the current token
+        $accessToken->delete();
+        $tokens = $this->generateTokens($user);
+        return $this->sendResponseWithTokens($tokens, ['user' => $user]);
     }
 }
