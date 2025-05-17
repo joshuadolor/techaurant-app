@@ -38,12 +38,7 @@ export const publicRoutes = [
         component: () => import('@/pages/auth/callback'),
         meta: { public: true }
     },
-    {
-        path: '/email/verify/:id/:hash',
-        name: 'verify-email',
-        component: () => import('@/pages/auth/VerifyEmail'),
-        meta: { public: true }
-    },
+
 ]
 
 const routes = [
