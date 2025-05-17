@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
+use Firebase\JWT\JWT;
 
 class VerifyEmailNotification extends VerifyEmail
 {
@@ -27,14 +28,19 @@ class VerifyEmailNotification extends VerifyEmail
      */
     protected function verificationUrl($notifiable)
     {
-        $frontendUrl = config('app.frontend_url');
-        
-        $params = [
-            'id' => $notifiable->getKey(),
-            'hash' => sha1($notifiable->getEmailForVerification()),
-        ];
+        $token = JWT::encode([
+            'email' => $notifiable->getEmailForVerification(),
+            'exp' => now()->addHours(config('app.jwt_expiration_hours'))->timestamp
+        ], config('app.key'), 'HS256');
 
-        return $frontendUrl . '/email/verify/' . $params['id'] . '/' . $params['hash'];
+        // Generate the signed URL with the JWT token
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['token' => $token]
+        );
+
+        return $url;
     }
 
     /**
@@ -51,4 +57,4 @@ class VerifyEmailNotification extends VerifyEmail
             ->action(Lang::get('Verify Email Address'), $this->verificationUrl($notifiable))
             ->line(Lang::get('If you did not create an account, no further action is required.'));
     }
-} 
+}

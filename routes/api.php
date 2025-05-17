@@ -25,14 +25,7 @@ Route::prefix('auth')->group(function () {
         Route::post('email/verification-notification', [AuthController::class, 'resendVerificationEmail'])
             ->middleware('throttle:6,1')
             ->name('verification.send');
-
-
-        // User routes
     });
-
-    Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
 });
 
 // User routes (including registration)

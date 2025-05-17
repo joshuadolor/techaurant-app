@@ -135,4 +135,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'jwt_expiration_hours' => env('JWT_EXPIRATION_HOURS', 24),
 ];

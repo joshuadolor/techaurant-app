@@ -1,7 +1,7 @@
 import { ElNotification } from 'element-plus'
 
 const defaultOptions = {
-    duration: 3000,
+    duration: 5000,
     position: 'top-right'
 }
 

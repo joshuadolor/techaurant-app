@@ -20,6 +20,8 @@ use Illuminate\Auth\Events\PasswordReset;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class AuthController extends Controller
 {
@@ -132,19 +134,31 @@ class AuthController extends Controller
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function verifyEmail(EmailVerificationRequest $request)
+    public function verifyEmail(Request $request, $token)
     {
-        \Log::info('reached here');
-        if ($request->user()->hasVerifiedEmail()) {
-            return $this->successResponse(null, 'Email already verified');
+        try {
+            // Decode and verify the JWT token
+            $decoded = JWT::decode($token, new Key(config('app.key'), 'HS256'));
+
+            // Find user by email
+            $user = User::where('email', $decoded->email)->first();
+
+            if (!$user) {
+                return redirect(config('app.url') . '/email/resend-verification?msg=Invalid+verification+link');
+            }
+
+            if ($user->hasVerifiedEmail()) {
+                return redirect(config('app.url') . '?msg=Already+verified');
+            }
+
+            $user->markEmailAsVerified();
+
+            return redirect(config('app.url') . '?msg=Email+verified');
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Invalid verification link'
+            ], 400);
         }
-
-        // if ($request->user()->markEmailAsVerified()) {
-        //     event(new Verified($request->user()));
-        // }
-        $request->user()->markEmailAsVerified();
-
-        return $this->successResponse(null, 'Email verified successfully');
     }
 
     /**
