@@ -79,7 +79,6 @@ docker compose exec app npm install
 docker compose exec app npm run dev
 
 TO DO:
-[ ] - forgot password api and integration
-[ ] - forgot password email template
 [ ] - check user->is_locked: make it work
+[ ] - change password (logged in)
 [ ] - check flow 1. registration 2. email confirmation 3. login not confirmed 4. login 5. forgot password 6. reset email
