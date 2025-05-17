@@ -3,6 +3,7 @@ import AuthService from '@/services/auth';
 import AccountService from "@/services/account";
 import { AccountNotVerifiedError } from '@/utils/ErrorHandler';
 import User from '@/models/User';
+import { notify } from '@/utils/notification';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -10,23 +11,13 @@ export const useAuthStore = defineStore('auth', {
         token: localStorage.getItem('token') || null,
         isAuthenticated: !!localStorage.getItem('token'),
         isLoading: false,
-        alert: {
-            show: false,
-            message: "",
-            type: "success",
-        },
     }),
 
     actions: {
         setAlert(message, type = "success") {
-            this.alert = {
-                show: true,
-                message,
-                type,
-            };
-            setTimeout(() => {
-                this.alert.show = false;
-            }, 3000);
+            notify[type](message);
+
+
         },
         setAuthState(user, token) {
             this.user = new User(user);
@@ -84,8 +75,7 @@ export const useAuthStore = defineStore('auth', {
 
         async logout() {
             try {
-                // TODO: Uncomment this when the backend is ready or will this really be needed?
-                // await AccountService.logout();
+                await AuthService.logout();
                 this.user = null;
                 this.isAuthenticated = false;
                 localStorage.removeItem("token");
@@ -143,6 +133,5 @@ export const useAuthStore = defineStore('auth', {
         getUser: (state) => state.user || {},
         getToken: (state) => state.token,
         getIsAuthenticated: (state) => state.isAuthenticated,
-        getAlert: (state) => state.alert,
     }
 });

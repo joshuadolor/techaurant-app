@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -155,9 +153,7 @@ class AuthController extends Controller
 
             return redirect(config('app.url') . '?msg=Email+verified');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Invalid verification link'
-            ], 400);
+            return $this->errorResponse('Invalid verification link', 400);
         }
     }
 

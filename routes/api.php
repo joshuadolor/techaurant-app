@@ -12,6 +12,7 @@ Route::prefix('auth')->group(function () {
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
     Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+    Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
     // Social authentication routes
     Route::get('{provider}', [SocialAuthController::class, 'redirect']);

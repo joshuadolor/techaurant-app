@@ -26,9 +26,6 @@
         </BaseFormItem>
 
         <div class="flex justify-between items-center">
-            <label class="label cursor-pointer gap-2">
-                <el-checkbox v-model="form.remember" label="Remember me" />
-            </label>
             <router-link
                 to="/forgot-password"
                 class="link link-primary text-sm"

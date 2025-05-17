@@ -33,6 +33,10 @@ class AuthService {
     async me() {
         return ApiService.get(`${API_URL}/me`);
     }
+
+    async logout() {
+        return ApiService.get(`${API_URL}/logout`);
+    }
 }
 
 export default new AuthService(); 
