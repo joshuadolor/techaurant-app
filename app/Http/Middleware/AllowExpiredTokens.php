@@ -10,14 +10,13 @@ class AllowExpiredTokens
 {
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->bearerToken();
-        \Log::info('Token: ' . $token);
-        if (!$token) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        $refreshToken = $request->cookie('refresh_token');
+        
+        if (!$refreshToken) {
+            return response()->json(['message' => 'Refresh token not found'], 401);
         }
 
-        // Find the token in the database
-        $accessToken = PersonalAccessToken::findToken($token);
+        $accessToken = PersonalAccessToken::findToken($refreshToken);
 
         if (!$accessToken) {
             return response()->json(['message' => 'Invalid token'], 401);

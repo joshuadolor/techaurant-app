@@ -3,7 +3,7 @@ const API_URL = '/account';
 class AccountService {
 
     async register(credentials) {
-        return ApiService.post('/users', credentials);
+        return ApiService.post(`${API_URL}/register`, credentials);
     }
 
     async verifyEmail({ id, hash }) {

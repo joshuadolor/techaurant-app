@@ -3,7 +3,7 @@ const API_URL = '/auth';
 class AuthService {
 
     async socialLogin(provider) {
-        return ApiService.get(`/auth/${provider}`);
+        return ApiService.get(`/auth/social/${provider}`);
     }
 
     async login(credentials) {

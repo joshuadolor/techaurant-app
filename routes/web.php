@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AccountController;
 
-Route::get('verify-email/{token}', [AuthController::class, 'verifyEmail'])
+Route::get('verify-email/{token}', [AccountController::class, 'verifyEmail'])
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
 
