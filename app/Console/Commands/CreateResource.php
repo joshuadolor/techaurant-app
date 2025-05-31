@@ -20,17 +20,9 @@ class CreateResource extends Command
         $plural = Str::plural($name);
         $module = Str::studly($singular);
 
-        // Create Model
-        $this->call('make:model', [
-            'name' => $module
-        ]);
-
-        // Create Migration
-        $this->call('make:migration', [
-            'name' => "create_{$plural}_table"
-        ]);
-
-        // Create Controller
+        // Basic structure
+        $this->call('make:model', ['name' => $module]);
+        $this->call('make:migration', ['name' => "create_{$plural}_table"]);
         $this->call('make:controller', [
             'name' => "Api/{$module}Controller",
             '--api' => true

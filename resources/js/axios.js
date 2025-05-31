@@ -1,13 +1,15 @@
 import axios from 'axios';
 import { publicRoutes } from '@/router/routes';
 
+const getCSRFToken = () => document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
 const instance = axios.create({
     baseURL: '/api',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+        'X-CSRF-TOKEN': getCSRFToken(),
     },
     withCredentials: true
 });
@@ -15,9 +17,9 @@ const instance = axios.create({
 // Add request interceptor
 instance.interceptors.request.use(config => {
     // Get the CSRF token from the meta tag
-    const token = document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    if (token) {
-        config.headers['X-XSRF-TOKEN'] = token;
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+        config.headers['X-XSRF-TOKEN'] = csrfToken;
     }
 
     // Add auth token if available
