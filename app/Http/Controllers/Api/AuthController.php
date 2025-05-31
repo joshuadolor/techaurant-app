@@ -70,8 +70,8 @@ class AuthController extends Controller
 
     private function sendResponseWithTokens(array $tokens, $body = []): JsonResponse
     {
-        $rtExpireTime = config('sanctum.refresh_token_expiration');
-        $cookie = cookie('refreshToken', $tokens['refreshToken'], $rtExpireTime, secure: true);
+        $rtExpireTime = (int) config('sanctum.refresh_token_expiration');
+        $cookie = cookie('refreshToken', $tokens['refreshToken'], $rtExpireTime, '/', null, true, true);
 
         return $this->successResponse(array_merge($body, [
             'token' => $tokens['accessToken']
