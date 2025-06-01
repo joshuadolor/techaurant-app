@@ -1,7 +1,11 @@
 <?php
 
 return [
-    'model' => \App\Models\User::class,
+    'name' => 'users',
+    'controller' => App\Resources\User\Controllers\UserController::class,
+    'service' => App\Resources\User\Services\UserService::class,
+    'repository' => App\Resources\User\Repositories\UserRepository::class,
+    'model' => App\Models\User::class,
     'validation' => [
         'store' => [
             'name' => 'required|string|max:255',
@@ -15,5 +19,6 @@ return [
         ]
     ],
     'relationships' => ['roles', 'permissions'],
+    // keywords that are get parameters
     'searchable' => ['name', 'email']
 ];
