@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Api\Account\ForgotPasswordRequest;
 use App\Http\Requests\Api\Account\ResetPasswordRequest;
+use App\Http\Requests\Api\Account\ChangePasswordRequest;
 use App\Http\Requests\Api\Account\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -118,5 +119,20 @@ class AccountController extends Controller
         $request->user()->sendEmailVerificationNotification();
 
         return $this->successResponse(null, 'Verification link sent');
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->errorResponse('Current password is incorrect', 400);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return $this->successResponse(null, 'Password changed successfully');
     }
 }

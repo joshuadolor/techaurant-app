@@ -19,6 +19,7 @@
         </div>
         <div class="mt-10">
             <h3 class="text-lg font-bold">Change Password</h3>
+            <ChangePassword />
         </div>
     </div>
 </template>
@@ -27,6 +28,7 @@
 import { useAuthStore } from "@/stores/auth";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import ChangePassword from "@/widgets/Forms/ChangePassword";
 
 const authStore = useAuthStore();
 const router = useRouter();

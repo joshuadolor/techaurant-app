@@ -11,7 +11,8 @@ Route::prefix('account')->group(function () {
     Route::post('forgot-password', [AccountController::class, 'forgotPassword']);
     Route::post('reset-password', [AccountController::class, 'resetPassword']);
     Route::post('register', [AccountController::class, 'createAccount']); 
-
+    Route::post('change-password', [AccountController::class, 'changePassword'])->middleware('auth:sanctum');
+    
      // Email verification routes
     Route::post('email/verification-notification', [AccountController::class, 'resendVerificationEmail'])
         ->middleware('throttle:6,1', 'auth:sanctum')
