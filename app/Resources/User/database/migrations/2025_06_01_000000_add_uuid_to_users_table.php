@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Add UUID column after id
-            $table->uuid('uuid')->after('id')->unique();
+            $table->uuid('uuid')->after('id')->nullable();
         });
 
         // Generate UUIDs for existing records
@@ -27,7 +27,7 @@ return new class extends Migration
 
         // Make uuid column required after populating
         Schema::table('users', function (Blueprint $table) {
-            $table->uuid('uuid')->nullable(false)->change();
+            $table->uuid('uuid')->nullable(false)->unique()->change();
         });
 
         // Add index for better performance

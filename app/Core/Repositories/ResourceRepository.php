@@ -177,8 +177,11 @@ abstract class ResourceRepository implements IResourceRepository
 
         // Handle sorting
         if (isset($params['sort_by'])) {
-            $direction = $params['sort_direction'] ?? 'asc';
-            $query->orderBy($params['sort_by'], $direction);
+            $sort_direction = 'asc';
+            if($params['sort_by'] !== 'asc'){
+                $sort_direction = 'desc';
+            }
+            $query->orderBy($params['sort_by'], $sort_direction);
         }
 
         // Handle filtering

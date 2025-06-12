@@ -33,7 +33,12 @@ class ResourceServiceProvider extends ServiceProvider
         }
 
         foreach (File::directories($resourcesPath) as $resourcePath) {
-            $config = require "{$resourcePath}/config.php";
+            $configPath = "{$resourcePath}/config.php";
+            if (file_exists($configPath)) {
+                $config = require $configPath;
+            } else {
+                continue;
+            }
 
             if (array_is_list($config) && count($config) > 0) {
                 foreach ($config as $key => $value) {
