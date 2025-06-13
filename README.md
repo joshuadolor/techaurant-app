@@ -58,8 +58,12 @@ docker compose exec app php artisan key:generate
 # Run database migrations
 docker compose exec app php artisan migrate
 
+docker compose exec app php artisan resource:migrate
+
 # Seed the database with initial data
 docker compose exec app php artisan db:seed
+
+#install resources
 
 # Install and build frontend assets
 docker compose exec app npm install
