@@ -21,6 +21,10 @@ class AccountService {
     async changePassword(data) {
         return await ApiService.post(`${API_URL}/change-password`, data);
     }
+    
+     async resendVerification() {
+        return await ApiService.post(`${API_URL}/email/verification-notification`)
+    }
 
 }
 

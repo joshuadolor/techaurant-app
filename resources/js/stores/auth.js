@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async resendVerification() {
-            return await AuthService.resendVerification()
+            return await AccountService.resendVerification()
         },
 
         async verifyEmail({ id, hash }) {

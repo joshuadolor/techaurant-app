@@ -14,10 +14,6 @@ class AuthService {
         return ApiService.post(`${API_URL}/logout`);
     }
 
-    async resendVerification() {
-        return await ApiService.post(`${API_URL}/email/verification-notification`)
-    }
-
     async resetPassword(data) {
         return ApiService.post(`${API_URL}/reset-password`, data);
     }
