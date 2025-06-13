@@ -56,24 +56,6 @@ abstract class ResourceRepository implements IResourceRepository
         return $query->get()->all();
     }
 
-    public function create(array $data): object
-    {
-        return $this->model->create($data);
-    }
-
-    public function update(string $uuid, array $data): object
-    {
-        $model = $this->findByUuidOrFail($uuid);
-        $model->update($data);
-        return $model;
-    }
-
-    public function delete(string $uuid): bool
-    {
-        $model = $this->findByUuidOrFail($uuid);
-        return $model->delete();
-    }
-
     public function query(): object
     {
         return $this->model->query();
@@ -121,7 +103,7 @@ abstract class ResourceRepository implements IResourceRepository
 
     public function last(): ?object
     {
-        return $this->model->latest()->first();
+        return $this->model->orderBy('id', 'desc')->first();
     }
 
     public function with(array $relations): self
@@ -177,10 +159,7 @@ abstract class ResourceRepository implements IResourceRepository
 
         // Handle sorting
         if (isset($params['sort_by'])) {
-            $sort_direction = 'asc';
-            if($params['sort_by'] !== 'asc'){
-                $sort_direction = 'desc';
-            }
+            $sort_direction = $params['sort_direction'] ?? 'asc';
             $query->orderBy($params['sort_by'], $sort_direction);
         }
 
@@ -206,5 +185,39 @@ abstract class ResourceRepository implements IResourceRepository
         $this->relations = [];
         $this->conditions = [];
         $this->orderBy = [];
+    }
+
+    protected function executeInTransaction(callable $callback)
+    {
+        try {
+            return DB::transaction($callback);
+        } catch (\Exception $e) {
+            Log::error('Transaction failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function create(array $data): object
+    {
+        return $this->executeInTransaction(function () use ($data) {
+            return $this->model->create($data);
+        });
+    }
+
+    public function update(string $uuid, array $data): object
+    {
+        return $this->executeInTransaction(function () use ($uuid, $data) {
+            $model = $this->findByUuidOrFail($uuid);
+            $model->update($data);
+            return $model;
+        });
+    }
+
+    public function delete(string $uuid): bool
+    {
+        return $this->executeInTransaction(function () use ($uuid) {
+            $model = $this->findByUuidOrFail($uuid);
+            return $model->delete();
+        });
     }
 }

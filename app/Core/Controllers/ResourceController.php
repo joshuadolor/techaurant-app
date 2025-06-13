@@ -19,9 +19,14 @@ abstract class ResourceController extends BaseController implements IResourceCon
     protected array $validationRules = [];
     protected string $label = 'Resource';
 
-    public function __construct(IResourceService $service, array $validationRules = [], string $label = 'Resource')
-    {
+    public function __construct(
+        IResourceService $service, 
+        RequestValidatorService $validator,
+        array $validationRules = [], 
+        string $label = 'Resource'
+    ) {
         $this->service = $service;
+        $this->validator = $validator;
         $this->validationRules = $validationRules;
         $this->label = Str::singular($label);
     }

@@ -17,7 +17,8 @@ abstract class ResourceService implements IResourceService
 
     public function getPaginated(array $params, ?int $perPage = 15): array
     {
-        return $this->repo->getPaginated($params, $perPage);
+        $validatedParams = $this->validateSearchParams($params);
+        return $this->repo->getPaginated($validatedParams, $perPage);
     }
 
     public function find(string $uuid): ?object
@@ -36,12 +37,16 @@ abstract class ResourceService implements IResourceService
 
     public function create(array $data): object
     {
-        return $this->repo->create($data);
+        $processedData = $this->processCreateData($data);
+        $result = $this->repo->create($processedData);
+        return $this->transformData($result);
     }
 
     public function update(string $uuid, array $data): object
     {
-        return $this->repo->update($uuid, $data);
+        $processedData = $this->processUpdateData($data);
+        $result = $this->repo->update($uuid, $processedData);
+        return $this->transformData($result);
     }
 
     public function delete(string $uuid): bool
@@ -110,7 +115,7 @@ abstract class ResourceService implements IResourceService
      * Validate search parameters
      * Override this in concrete services to add custom validation
      */
-    protected function validateSearchParams(array $params): void
+    protected function validateSearchParams(array $params): array
     {
         // Validate search fields
         if (isset($params['search'])) {
@@ -136,6 +141,8 @@ abstract class ResourceService implements IResourceService
                 array_flip($filterableFields)
             );
         }
+
+        return $params;
     }
 
     /**
