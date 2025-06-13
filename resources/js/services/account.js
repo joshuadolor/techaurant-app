@@ -18,6 +18,10 @@ class AccountService {
         return await ApiService.post(`${API_URL}/reset-password`, data);
     }
 
+    async changePassword(data) {
+        return await ApiService.post(`${API_URL}/change-password`, data);
+    }
+
 }
 
 export default new AccountService(); 
