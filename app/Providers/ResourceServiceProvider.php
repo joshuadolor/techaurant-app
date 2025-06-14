@@ -5,22 +5,50 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use App\Core\Controllers\ResourceController;
+use App\Core\Services\ResourceService;
+use App\Core\Repositories\ResourceRepository;
+use App\Core\Transformers\ResourceTransformer;
+use Illuminate\Support\Str;
 
 class ResourceServiceProvider extends ServiceProvider
 {
     private function registerResources($config)
     {
-        $controller = $config['controller'];
+        $resourceName = $config['name'];
+        $controllerName = $config['controller'] ?? null;
+        $controller = ResourceController::class;
 
-        $this->app->bind($controller, function ($app) use ($config, $controller) {
+        if (!$controllerName) {
+            $resourceSingular = Str::singular($resourceName);
+            $controllerName = 'App\\Resources\\' . Str::studly($resourceSingular) . '\\Controllers\\' . Str::studly($resourceSingular) . 'Controller';
+        }
+        if (class_exists($controllerName)) {
+            $controller = $controllerName;
+        }
+
+        $this->app->bind($controllerName, function ($app) use ($config, $controller) {
             $validation = $config['validation'];
-            $service = $config['service'];
-            $repository = $config['repository'];
+            $service = $config['service'] ?? ResourceService::class;
+            $repository = $config['repository'] ?? ResourceRepository::class;
 
             $resourceName = $config['name'];
-            $resourceRepository = new $repository(new $config['model'](), $config['searchable']);
-            $resourceService = new $service($resourceRepository);
 
+
+            $searchableFields = $config['searchable'] ?? [];
+            $sortableFields = $config['sortable'] ?? [];
+            $filterableFields = $config['filterable'] ?? [];
+
+            $fields = [
+                'searchable' => $searchableFields,
+                'sortable' => $sortableFields,
+                'filterable' => $filterableFields,
+            ];
+
+            $transformer = $config['transformer'] ?? ResourceTransformer::class;
+
+            $resourceRepository = new $repository(new $config['model'](), $searchableFields);
+            $resourceService = new $service($resourceRepository, new $transformer(), $fields);
             return new $controller($resourceService, $validation, $resourceName);
         });
     }
@@ -45,7 +73,7 @@ class ResourceServiceProvider extends ServiceProvider
                     $this->registerResources($value);
                 }
 
-                return;
+                continue;
             }
 
             $this->registerResources($config);
