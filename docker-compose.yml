@@ -1,75 +1,75 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
-      - "5174:5174"
-    container_name: ${APP_NAME:-laravel}-app
-    restart: unless-stopped
-    working_dir: /var/www/
-    volumes:
-      - ./:/var/www
-    networks:
-      - techaurant-network
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "5173:5173"
+            - "5174:5174"
+        container_name: ${APP_NAME:-laravel}-app
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        networks:
+            - techaurant-network
 
-  nginx:
-    image: nginx:1.25
-    container_name: ${APP_NAME:-laravel}-nginx
-    restart: unless-stopped
-    ports:
-      - "8000:80"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx:/etc/nginx/conf.d
-    networks:
-      - techaurant-network
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      - NGINX_WORKER_PROCESSES=auto
-      - NGINX_WORKER_CONNECTIONS=1024
-      - NGINX_KEEPALIVE_TIMEOUT=65
-      - NGINX_CLIENT_MAX_BODY_SIZE=10M
+    nginx:
+        image: nginx:1.25
+        container_name: ${APP_NAME:-laravel}-nginx
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx:/etc/nginx/conf.d
+        networks:
+            - techaurant-network
+        security_opt:
+            - no-new-privileges:true
+        environment:
+            - NGINX_WORKER_PROCESSES=auto
+            - NGINX_WORKER_CONNECTIONS=1024
+            - NGINX_KEEPALIVE_TIMEOUT=65
+            - NGINX_CLIENT_MAX_BODY_SIZE=10M
 
-  db:
-    image: mysql:8.0
-    container_name: ${APP_NAME:-laravel}-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: techaurant
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: secret
-      MYSQL_USER: techaurant
-    volumes:
-      - dbdata:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - techaurant-network
+    db:
+        image: mysql:8.0
+        container_name: ${APP_NAME:-laravel}-db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE:-db}
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+            MYSQL_USER: ${DB_USER:-techaurant}
+        volumes:
+            - dbdata:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        networks:
+            - techaurant-network
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: ${APP_NAME:-laravel}-phpmyadmin
-    ports:
-      - "8080:80"
-    networks:
-      - techaurant-network
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: ${APP_NAME:-laravel}-mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - techaurant-network
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: ${APP_NAME:-laravel}-phpmyadmin
+        ports:
+            - "8080:80"
+        networks:
+            - techaurant-network
+    mailhog:
+        image: mailhog/mailhog:latest
+        container_name: ${APP_NAME:-laravel}-mailhog
+        ports:
+            - "1025:1025"
+            - "8025:8025"
+        networks:
+            - techaurant-network
 
 networks:
-  techaurant-network:
-    driver: bridge
+    techaurant-network:
+        driver: bridge
 
 volumes:
-  dbdata:
+    dbdata:
