@@ -37,10 +37,8 @@ const handlePageChange = (page) => {
 
 const columns = ref([
     { prop: "name", label: "Name", sortable: true },
-    { prop: "address", label: "Address", sortable: true },
-    { prop: "phone", label: "Phone", sortable: true },
-    { prop: "email", label: "Email", sortable: true },
-    { prop: "status", label: "Status", sortable: true },
+    { prop: "is_active", label: "Is Active", sortable: true },
+    { prop: "is_verified", label: "Is Verified", sortable: true },
     { prop: "created_at", label: "Created At", sortable: true },
 ]);
 
