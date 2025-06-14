@@ -14,13 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use App\Enums\TokenAbility;
-use Illuminate\Http\JsonResponse;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Traits\SendsTokenResponses;
 
 class AuthController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, SendsTokenResponses;
 
     public function login(LoginRequest $request)
     {
@@ -46,36 +45,6 @@ class AuthController extends Controller
         }
 
         return $this->sendResponseWithTokens($tokens, ['user' => $user]);
-    }
-
-    /**
-     * @return array{
-     *     accessToken: string,
-     *     refreshToken: string,
-     * }
-     */
-    public function generateTokens($user): array
-    {
-        $atExpireTime = now()->addMinutes(config('sanctum.expiration'));
-        $rtExpireTime = now()->addMinutes(config('sanctum.refresh_token_expiration'));
-
-        $accessToken = $user->createToken('access_token', [TokenAbility::ACCESS_API], $atExpireTime);
-        $refreshToken = $user->createToken('refresh_token', [TokenAbility::ISSUE_ACCESS_TOKEN], $rtExpireTime);
-
-        return [
-            'accessToken' => $accessToken->plainTextToken,
-            'refreshToken' => $refreshToken->plainTextToken,
-        ];
-    }
-
-    private function sendResponseWithTokens(array $tokens, $body = []): JsonResponse
-    {
-        $rtExpireTime = config('sanctum.refresh_token_expiration');
-        $cookie = cookie('refreshToken', $tokens['refreshToken'], $rtExpireTime, secure: true);
-
-        return $this->successResponse(array_merge($body, [
-            'token' => $tokens['accessToken']
-        ]))->withCookie($cookie);
     }
 
     public function logout(Request $request)

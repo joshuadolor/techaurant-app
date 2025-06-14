@@ -6,9 +6,13 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use App\Traits\SendsTokenResponses;
+use App\Traits\ApiResponse;
 
 class SocialAuthController extends Controller
 {
+    use SendsTokenResponses, ApiResponse;
+
     public function redirect($provider)
     {
         return response()->json([
@@ -40,19 +44,16 @@ class SocialAuthController extends Controller
 
             Auth::login($user);
 
-            // Create token for API authentication
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $tokens = $this->generateTokens($user);
 
-            return response()->json([
+            return $this->sendResponseWithTokens($tokens, [
                 'user' => $user,
-                'token' => $token,
                 'status' => 'success'
             ]);
+
+            
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Authentication failed',
-                'message' => $e->getMessage()
-            ], 422);
+            return $this->errorResponse('Authentication failed', 422, $e->getMessage());
         }
     }
 }

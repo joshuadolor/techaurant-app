@@ -19,7 +19,7 @@ return new class extends Migration
         });
 
         // Generate UUIDs for existing records
-        DB::table('users')->orderBy('id')->each(function ($user) {
+        DB::table('users')->each(function ($user) {
             DB::table('users')
                 ->where('id', $user->id)
                 ->update(['uuid' => (string) Str::uuid()]);
