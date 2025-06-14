@@ -9,6 +9,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Traits\SendsTokenResponses;
 use App\Traits\ApiResponse;
 use App\Enums\SocialProvider;
+use Illuminate\Support\Facades\Hash;
 
 class SocialAuthController extends Controller
 {
@@ -34,38 +35,41 @@ class SocialAuthController extends Controller
 
             $user = User::where('email', $socialUser->email)->first();
 
-            $data = [
-                'name' => $socialUser->name,
-            ];
-
             if (!$user) {
-                $data['password'] = bcrypt(Str::random(16));
-                $data[$provider . '_id'] = $socialUser->id;
+                $data = [
+                    'name' => $socialUser->name,
+                    'password' => Hash::make(Str::random(16)),
+                    $provider . '_id' => $socialUser->id,
+                    'email' => $socialUser->email,
+                ];
                 
                 $user = User::create($data);
             } else {
 
+                $data = [
+                    'name' => $socialUser->name,
+                ];
+
                 $currentPassword = $user->password;
                 if(!$currentPassword) {
-                    $data['password'] = bcrypt(Str::random(16));
+                    $data['password'] = Hash::make(Str::random(16));
                 }
                 $hasProviderId = $user->{$provider . '_id'};
 
                 if(!$hasProviderId) {
                     $data[$provider . '_id'] = $socialUser->id;
                 }
-
-                $data['email'] = $socialUser->email;
                 
                 $user->update($data);
             }
            
+            if (!$user->id) {
+                $user = User::where('email', $socialUser->email)->first();
+            }
 
             if (!$user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
             }
-
-            Auth::login($user);
 
             $tokens = $this->generateTokens($user);
 
