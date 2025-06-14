@@ -11,7 +11,7 @@ interface IResourceService
      * @param int|null $perPage Number of records per page
      * @return array{data: array, meta: array} Paginated data with metadata
      */
-    public function getPaginated(array $params, ?int $perPage = 15): array;
+    public function getPaginated(array $params, ?int $perPage = 10): array;
 
     /**
      * Find a record by UUID

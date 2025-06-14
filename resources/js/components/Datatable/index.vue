@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-table
-            :data="paginatedData"
+            :data="props.data"
             stripe
             border
             class="w-full rounded-lg"
@@ -17,16 +17,23 @@
                 :width="col.width"
                 :align="col.align || 'left'"
             >
-                <template v-if="col.slot" #[col.slot]="scope">
-                    <slot :name="col.slot" v-bind="scope" />
+            </el-table-column>
+            <el-table-column
+                v-if="hasActions"
+                prop="actions"
+                label="Actions"
+                width="100"
+            >
+                <template #default="scope">
+                    <slot name="actions" v-bind="scope" />
                 </template>
             </el-table-column>
         </el-table>
         <div class="flex justify-end mt-4">
             <el-pagination
-                v-model:current-page="currentPage"
-                :page-size="pageSize"
-                :total="data.length"
+                :current-page="props.query.page"
+                :page-size="props.query.per_page"
+                :total="props.total"
                 layout="prev, pager, next"
                 @current-change="handlePageChange"
             />
@@ -35,30 +42,20 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, useSlots } from "vue";
+
+const emit = defineEmits(["page-change"]);
 
 const props = defineProps({
     columns: { type: Array, required: true },
     data: { type: Array, required: true },
-    pageSize: { type: Number, default: 10 },
+    query: { type: Object, required: true },
+    total: { type: Number, required: true },
 });
 
-const currentPage = ref(1);
-
-const paginatedData = computed(() => {
-    const start = (currentPage.value - 1) * props.pageSize;
-    return props.data.slice(start, start + props.pageSize);
-});
+const hasActions = computed(() => !!useSlots().actions);
 
 function handlePageChange(page) {
-    currentPage.value = page;
+    emit("page-change", page);
 }
-
-// Reset to first page if data changes
-watch(
-    () => props.data,
-    () => {
-        currentPage.value = 1;
-    }
-);
 </script>

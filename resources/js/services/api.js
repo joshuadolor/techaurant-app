@@ -11,8 +11,8 @@ class ApiService {
         }
     }
 
-    get(url, config = {}) {
-        return this.request('get', url, null, config);
+    get(url, params = {}, config = {}) {
+        return this.request('get', url, { ...config, params });
     }
 
     post(url, data, config = {}) {

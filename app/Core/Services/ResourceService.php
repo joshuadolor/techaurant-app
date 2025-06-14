@@ -24,7 +24,7 @@ class ResourceService implements IResourceService
         $this->filterableFields = $fields['filterable'] ?? [];
     }
 
-    public function getPaginated(array $params, ?int $perPage = 15): array
+    public function getPaginated(array $params, ?int $perPage = 10): array
     {
         $validatedParams = $this->validateSearchParams($params);
         $result = $this->repo->getPaginated($validatedParams, $perPage);
