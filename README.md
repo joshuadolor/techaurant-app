@@ -85,6 +85,10 @@ Please read our contributing guidelines before submitting pull requests.
 
 [License Type] - See LICENSE file for details
 
+### Resource Dependencies
+
+app/Models/User.php - this should be defined here
+
 ### Todo
 
 [ ] -
