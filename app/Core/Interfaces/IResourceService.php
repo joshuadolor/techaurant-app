@@ -19,7 +19,7 @@ interface IResourceService
      * @param string $uuid The UUID of the record
      * @return object|null The found record or null
      */
-    public function find(string $uuid): ?object;
+    public function find(string $uuid): ?array;
 
     /**
      * Find a record by UUID or throw an exception
@@ -28,7 +28,7 @@ interface IResourceService
      * @return object The found record
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findOrFail(string $uuid): object;
+    public function findOrFail(string $uuid): array;
 
     /**
      * Create a new record
@@ -36,7 +36,7 @@ interface IResourceService
      * @param array $data The data to create the record with
      * @return object The created record
      */
-    public function create(array $data): object;
+    public function create(array $data): array;
 
     /**
      * Update a record
@@ -45,7 +45,7 @@ interface IResourceService
      * @param array $data The data to update the record with
      * @return object The updated record
      */
-    public function update(string $uuid, array $data): object;
+    public function update(string $uuid, array $data): array;
 
     /**
      * Delete a record
@@ -90,12 +90,12 @@ interface IResourceService
      * 
      * @return object|null The first record or null
      */
-    public function first(): ?object;
+    public function first(): ?array;
 
     /**
      * Get the last record
      * 
      * @return object|null The last record or null
      */
-    public function last(): ?object;
+    public function last(): ?array;
 }

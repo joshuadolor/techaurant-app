@@ -10,7 +10,7 @@ use App\Core\Interfaces\IResourceController;
 use App\Core\Interfaces\IResourceService;
 use App\Core\Services\RequestValidatorService;
 
-abstract class ResourceController extends BaseController implements IResourceController
+class ResourceController extends BaseController implements IResourceController
 {
     use ApiResponse;
 
@@ -20,13 +20,12 @@ abstract class ResourceController extends BaseController implements IResourceCon
     protected string $label = 'Resource';
 
     public function __construct(
-        IResourceService $service, 
-        RequestValidatorService $validator,
-        array $validationRules = [], 
+        IResourceService $service,
+        array $validationRules = [],
         string $label = 'Resource'
     ) {
         $this->service = $service;
-        $this->validator = $validator;
+        $this->validator = new RequestValidatorService();
         $this->validationRules = $validationRules;
         $this->label = Str::singular($label);
     }

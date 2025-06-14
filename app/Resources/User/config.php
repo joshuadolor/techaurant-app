@@ -2,9 +2,7 @@
 
 return [
     'name' => 'users',
-    'controller' => App\Resources\User\Controllers\UserController::class,
-    'service' => App\Resources\User\Services\UserService::class,
-    'repository' => App\Resources\User\Repositories\UserRepository::class,
+    'controller' => 'App\Resources\User\Controllers\UserController',
     'model' => App\Models\User::class,
     'validation' => [
         'store' => [

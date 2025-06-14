@@ -6,7 +6,7 @@ use App\Core\Interfaces\IResourceRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-abstract class ResourceRepository implements IResourceRepository
+class ResourceRepository implements IResourceRepository
 {
     protected Model $model;
     protected array $searchableFields = [];

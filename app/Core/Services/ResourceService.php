@@ -4,45 +4,61 @@ namespace App\Core\Services;
 
 use App\Core\Interfaces\IResourceRepository;
 use App\Core\Interfaces\IResourceService;
+use App\Core\Transformers\ResourceTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-abstract class ResourceService implements IResourceService
+class ResourceService implements IResourceService
 {
     protected IResourceRepository $repo;
+    protected array $searchableFields = [];
+    protected array $sortableFields = [];
+    protected array $filterableFields = [];
+    protected ResourceTransformer $transformer;
 
-    public function __construct(IResourceRepository $repo)
+    public function __construct(IResourceRepository $repo, ResourceTransformer $transformer, array $fields = [])
     {
         $this->repo = $repo;
+        $this->transformer = $transformer;
+        $this->searchableFields = $fields['searchable'] ?? [];
+        $this->sortableFields = $fields['sortable'] ?? [];
+        $this->filterableFields = $fields['filterable'] ?? [];
     }
 
     public function getPaginated(array $params, ?int $perPage = 15): array
     {
         $validatedParams = $this->validateSearchParams($params);
-        return $this->repo->getPaginated($validatedParams, $perPage);
+        $result = $this->repo->getPaginated($validatedParams, $perPage);
+
+        $result['data'] = array_map(function ($item) {
+            return $this->transformData($item);
+        }, $result['data']);
+
+        return $result;
     }
 
-    public function find(string $uuid): ?object
+    public function find(string $uuid): ?array
     {
-        return $this->repo->findByUuid($uuid);
+        $result = $this->repo->findByUuid($uuid);
+        return $this->transformData($result);
     }
 
-    public function findOrFail(string $uuid): object
+    public function findOrFail(string $uuid): array
     {
         $record = $this->repo->findByUuid($uuid);
         if (!$record) {
             throw new ModelNotFoundException();
         }
-        return $record;
+        return $this->transformData($record);
     }
 
-    public function create(array $data): object
+    public function create(array $data): array
     {
         $processedData = $this->processCreateData($data);
         $result = $this->repo->create($processedData);
         return $this->transformData($result);
     }
 
-    public function update(string $uuid, array $data): object
+    public function update(string $uuid, array $data): array
     {
         $processedData = $this->processUpdateData($data);
         $result = $this->repo->update($uuid, $processedData);
@@ -56,7 +72,8 @@ abstract class ResourceService implements IResourceService
 
     public function findByCriteria(array $criteria): array
     {
-        return $this->repo->findByCriteria($criteria);
+        $result = $this->repo->findByCriteria($criteria);
+        return $this->transformData($result);
     }
 
     public function exists(string $uuid): bool
@@ -66,7 +83,8 @@ abstract class ResourceService implements IResourceService
 
     public function all(): array
     {
-        return $this->repo->all();
+        $result = $this->repo->all();
+        return $this->transformData($result);
     }
 
     public function count(): int
@@ -74,14 +92,16 @@ abstract class ResourceService implements IResourceService
         return $this->repo->count();
     }
 
-    public function first(): ?object
+    public function first(): ?array
     {
-        return $this->repo->first();
+        $result = $this->repo->first();
+        return $this->transformData($result);
     }
 
-    public function last(): ?object
+    public function last(): ?array
     {
-        return $this->repo->last();
+        $result = $this->repo->last();
+        return $this->transformData($result);
     }
 
     /**
@@ -90,7 +110,7 @@ abstract class ResourceService implements IResourceService
      */
     protected function getSearchableFields(): array
     {
-        return [];
+        return $this->searchableFields;
     }
 
     /**
@@ -99,7 +119,7 @@ abstract class ResourceService implements IResourceService
      */
     protected function getSortableFields(): array
     {
-        return [];
+        return $this->sortableFields;
     }
 
     /**
@@ -108,7 +128,7 @@ abstract class ResourceService implements IResourceService
      */
     protected function getFilterableFields(): array
     {
-        return [];
+        return $this->filterableFields;
     }
 
     /**
@@ -167,8 +187,8 @@ abstract class ResourceService implements IResourceService
      * Transform data before returning
      * Override this in concrete services to add custom transformation
      */
-    protected function transformData(object $data): object
+    protected function transformData($data): array
     {
-        return $data;
+        return $this->transformer->transform($data->toArray());
     }
 }
