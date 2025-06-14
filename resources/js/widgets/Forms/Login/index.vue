@@ -12,6 +12,7 @@
                 type="email"
                 placeholder="Enter your email"
                 :prefix-icon="Message"
+                autocomplete="email"
             />
         </BaseFormItem>
 
@@ -21,6 +22,7 @@
                 type="password"
                 placeholder="Enter your password"
                 :prefix-icon="Lock"
+                autocomplete="current-password"
                 show-password
             />
         </BaseFormItem>
