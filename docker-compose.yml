@@ -8,7 +8,7 @@ services:
         ports:
             - "5173:5173"
             - "5174:5174"
-        container_name: ${APP_NAME:-laravel}-app
+        container_name: Techaurant-app
         restart: unless-stopped
         working_dir: /var/www/
         volumes:
@@ -18,7 +18,7 @@ services:
 
     nginx:
         image: nginx:1.25
-        container_name: ${APP_NAME:-laravel}-nginx
+        container_name: Techaurant-nginx
         restart: unless-stopped
         ports:
             - "8000:80"
@@ -37,10 +37,10 @@ services:
 
     db:
         image: mysql:8.0
-        container_name: ${APP_NAME:-laravel}-db
+        container_name: Techaurant-db
         restart: unless-stopped
         environment:
-            MYSQL_DATABASE: ${DB_DATABASE:-db}
+            MYSQL_DATABASE: ${DB_DATABASE:-techaurant}
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
             MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
             MYSQL_USER: ${DB_USER:-techaurant}
@@ -53,14 +53,14 @@ services:
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:latest
-        container_name: ${APP_NAME:-laravel}-phpmyadmin
+        container_name: Techaurant-phpmyadmin
         ports:
             - "8080:80"
         networks:
             - techaurant-network
     mailhog:
         image: mailhog/mailhog:latest
-        container_name: ${APP_NAME:-laravel}-mailhog
+        container_name: Techaurant-mailhog
         ports:
             - "1025:1025"
             - "8025:8025"
