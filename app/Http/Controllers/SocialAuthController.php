@@ -6,9 +6,14 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use App\Traits\SendsTokenResponses;
+use App\Traits\ApiResponse;
+use App\Enums\SocialProvider;
 
 class SocialAuthController extends Controller
 {
+    use SendsTokenResponses, ApiResponse;
+
     public function redirect($provider)
     {
         return response()->json([
@@ -19,20 +24,42 @@ class SocialAuthController extends Controller
         ]);
     }
 
-    public function callback($provider)
+    public function callback(SocialProvider $provider)
     {
         try {
+            $provider = $provider->value;
             $socialUser = Socialite::driver($provider)
                 ->stateless()
                 ->user();
 
-            $user = User::updateOrCreate([
-                'email' => $socialUser->email,
-            ], [
+            $user = User::where('email', $socialUser->email)->first();
+
+            $data = [
                 'name' => $socialUser->name,
-                'password' => bcrypt(Str::random(16)),
-                $provider . '_id' => $socialUser->id,
-            ]);
+            ];
+
+            if (!$user) {
+                $data['password'] = bcrypt(Str::random(16));
+                $data[$provider . '_id'] = $socialUser->id;
+                
+                $user = User::create($data);
+            } else {
+
+                $currentPassword = $user->password;
+                if(!$currentPassword) {
+                    $data['password'] = bcrypt(Str::random(16));
+                }
+                $hasProviderId = $user->{$provider . '_id'};
+
+                if(!$hasProviderId) {
+                    $data[$provider . '_id'] = $socialUser->id;
+                }
+
+                $data['email'] = $socialUser->email;
+                
+                $user->update($data);
+            }
+           
 
             if (!$user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
@@ -40,19 +67,16 @@ class SocialAuthController extends Controller
 
             Auth::login($user);
 
-            // Create token for API authentication
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $tokens = $this->generateTokens($user);
 
-            return response()->json([
+            return $this->sendResponseWithTokens($tokens, [
                 'user' => $user,
-                'token' => $token,
                 'status' => 'success'
             ]);
+
+            
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Authentication failed',
-                'message' => $e->getMessage()
-            ], 422);
+            return $this->errorResponse('Authentication failed', 422, $e->getMessage());
         }
     }
 }

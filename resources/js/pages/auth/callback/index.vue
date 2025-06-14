@@ -25,12 +25,12 @@ onMounted(async () => {
 
         // Send the callback URL to our backend
         const response = await axios.get(
-            `/auth/${provider}/callback${window.location.search}`
+            `/auth/social/${provider}/callback${window.location.search}`
         );
 
         // Store the token and user data
-        if (response.data.token) {
-            const { token, user } = response.data;
+        if (response.data?.data?.token) {
+            const { token, user } = response.data.data;
             authStore.setAuthState(user, token);
 
             // Redirect to dashboard
