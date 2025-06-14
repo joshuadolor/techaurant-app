@@ -49,16 +49,34 @@ const routes = [
         component: () => import('@/pages/Dashboard'),
     },
     {
+        path: '/users',
+        name: 'users',
+        component: () => import('@/pages/UserManagement'),
+    },
+    {
+        path: '/restaurants',
+        name: 'restaurants',
+        component: () => import('@/pages/RestaurantManagement'),
+    },
+    {
+        path: '/account',
+        name: 'account',
+        component: () => import('@/pages/Account'),
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('@/pages/Settings'),
+    },
+    {
+        path: '/menus',
+        name: 'menus',
+        component: () => import('@/pages/Menus'),
+    },
+    {
         path: '/email/resend-verification',
         name: 'resend-verification',
         component: () => import('@/pages/auth/VerifyEmail/resend'),
-    },
-    {
-        path: '/sample',
-        name: 'sample',
-        component: {
-            template: '<h1>Sample Page</h1>'
-        },
     },
 ]
 
