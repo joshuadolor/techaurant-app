@@ -27,14 +27,14 @@ class SocialAuthController extends Controller
     public function callback(SocialProvider $provider)
     {
         try {
+            $provider = $provider->value;
             $socialUser = Socialite::driver($provider)
                 ->stateless()
                 ->user();
 
-            $user = User::find($socialUser->email);
+            $user = User::where('email', $socialUser->email)->first();
 
             $data = [
-                'email' => $socialUser->email,
                 'name' => $socialUser->name,
             ];
 
@@ -42,20 +42,22 @@ class SocialAuthController extends Controller
                 $data['password'] = bcrypt(Str::random(16));
                 $data[$provider . '_id'] = $socialUser->id;
                 
-                User::create($data);
+                $user = User::create($data);
             } else {
 
                 $currentPassword = $user->password;
                 if(!$currentPassword) {
                     $data['password'] = bcrypt(Str::random(16));
                 }
-                $hasProviderId = $user->{$provider->value . '_id'};
+                $hasProviderId = $user->{$provider . '_id'};
 
                 if(!$hasProviderId) {
-                    $data[$provider->value . '_id'] = $socialUser->id;
+                    $data[$provider . '_id'] = $socialUser->id;
                 }
+
+                $data['email'] = $socialUser->email;
                 
-                $user = $user->update($data);
+                $user->update($data);
             }
            
 
