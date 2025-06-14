@@ -28,6 +28,7 @@
                 type="password"
                 placeholder="Enter your password"
                 :prefix-icon="Lock"
+                autocomplete="new-password"
                 show-password
             />
         </BaseFormItem>
@@ -38,6 +39,7 @@
                 type="password"
                 placeholder="Confirm your password"
                 :prefix-icon="Lock"
+                autocomplete="new-password"
                 show-password
             />
         </BaseFormItem>

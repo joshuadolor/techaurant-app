@@ -12,6 +12,7 @@
                 type="email"
                 placeholder="Enter your email"
                 :prefix-icon="Message"
+                autocomplete="email"
             />
         </BaseFormItem>
 

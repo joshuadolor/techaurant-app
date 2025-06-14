@@ -13,7 +13,7 @@
                 placeholder="Enter your current password"
                 :prefix-icon="Message"
                 show-password
-
+                autocomplete="current-password"
             />
         </BaseFormItem>
 
@@ -23,8 +23,8 @@
                 type="password"
                 placeholder="Enter your new password"
                 :prefix-icon="Message"
+                autocomplete="new-password"
                 show-password
-
             />
         </BaseFormItem>
 
@@ -34,8 +34,8 @@
                 type="password"
                 placeholder="Enter your new password"
                 :prefix-icon="Message"
+                autocomplete="new-password"
                 show-password
-
             />
         </BaseFormItem>
 
@@ -71,7 +71,7 @@ const form = reactive(defaultForm);
 const rules = computed(() => getRules(form));
 
 const resetForm = () => {
-    Object.assign(form, {...defaultForm});
+    Object.assign(form, { ...defaultForm });
 };
 
 const handleSubmit = async (values) => {
