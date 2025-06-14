@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use App\Traits\SendsTokenResponses;
 use App\Traits\ApiResponse;
+use App\Enums\SocialProvider;
 
 class SocialAuthController extends Controller
 {
@@ -23,20 +24,40 @@ class SocialAuthController extends Controller
         ]);
     }
 
-    public function callback($provider)
+    public function callback(SocialProvider $provider)
     {
         try {
             $socialUser = Socialite::driver($provider)
                 ->stateless()
                 ->user();
 
-            $user = User::updateOrCreate([
+            $user = User::find($socialUser->email);
+
+            $data = [
                 'email' => $socialUser->email,
-            ], [
                 'name' => $socialUser->name,
-                'password' => bcrypt(Str::random(16)),
-                $provider . '_id' => $socialUser->id,
-            ]);
+            ];
+
+            if (!$user) {
+                $data['password'] = bcrypt(Str::random(16));
+                $data[$provider . '_id'] = $socialUser->id;
+                
+                User::create($data);
+            } else {
+
+                $currentPassword = $user->password;
+                if(!$currentPassword) {
+                    $data['password'] = bcrypt(Str::random(16));
+                }
+                $hasProviderId = $user->{$provider->value . '_id'};
+
+                if(!$hasProviderId) {
+                    $data[$provider->value . '_id'] = $socialUser->id;
+                }
+                
+                $user = $user->update($data);
+            }
+           
 
             if (!$user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
