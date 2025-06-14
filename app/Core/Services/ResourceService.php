@@ -27,6 +27,7 @@ class ResourceService implements IResourceService
     public function getPaginated(array $params, ?int $perPage = 10): array
     {
         $validatedParams = $this->validateSearchParams($params);
+
         $result = $this->repo->getPaginated($validatedParams, $perPage);
 
         $result['data'] = array_map(function ($item) {

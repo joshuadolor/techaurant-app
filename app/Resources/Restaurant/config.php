@@ -26,6 +26,9 @@ return [
             ]
         ],
         'relationships' => ['owner'],
+        'filterable' => [
+            'owner_id',
+        ],
         'searchable' => ['name', 'slug', 'subdomain'],
     ],
 ];

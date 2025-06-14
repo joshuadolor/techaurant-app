@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Auth\Access\AuthorizationException;
 
-class AdminOnly
+class OwnerOnly
 {
 
     /**
@@ -18,11 +18,13 @@ class AdminOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $allowedRoles = [Role::ADMIN->value, Role::SUPER_ADMIN->value];
-
-        if (!$request->user() || !in_array($request->user()->role, $allowedRoles)) {
-            throw new AuthorizationException();
+        $user = $request->user();
+        if ($user && $user->role !== Role::SUPER_ADMIN->value) {
+            $filters = $request->input('filters', []);
+            $filters['owner_id'] = $user->id;
+            $request->merge(['filters' => $filters]);
         }
+
         return $next($request);
     }
 }
