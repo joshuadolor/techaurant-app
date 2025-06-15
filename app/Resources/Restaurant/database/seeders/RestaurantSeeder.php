@@ -19,7 +19,7 @@ class RestaurantSeeder extends Seeder
     public function run(): void
     {
         // Get or create a test user to be the owner
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $owner = User::factory()->create(
                 [
                     'name' => $this->faker->name(),
@@ -32,7 +32,7 @@ class RestaurantSeeder extends Seeder
             $ownerId = $owner->id;
 
             Restaurant::factory()
-                ->count(($i + 1) * 4 * $i)
+                ->count(4)
                 ->create(['owner_id' => $ownerId]);
         }
     }
