@@ -71,9 +71,9 @@ import { useAuthStore } from "@/stores/auth";
 
 const open = ref(false);
 
-const navItems = [
+const navItems = ref([
     { name: "dashboard", label: "Dashboard", route: "/dashboard", icon: "📊" },
-    { name: "users", label: "User Management", route: "/users", icon: "👥" },
+
     { name: "account", label: "Account", route: "/account", icon: "📝" },
     {
         name: "restaurants",
@@ -83,12 +83,21 @@ const navItems = [
     },
     { name: "menus", label: "Menus", route: "/menus", icon: "🍽️" },
     { name: "settings", label: "Settings", route: "/settings", icon: "⚙️" },
-];
+]);
 
 const route = useRoute();
 const isActive = (path) => route.path.startsWith(path);
 
 const authStore = useAuthStore();
+
+if (authStore.isSuperAdmin) {
+    navItems.value.push({
+        name: "users",
+        label: "User Management",
+        route: "/users",
+        icon: "👥",
+    });
+}
 const router = useRouter();
 const logout = async () => {
     await authStore.logout();
