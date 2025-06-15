@@ -91,4 +91,7 @@ app/Models/User.php - this should be defined here
 
 ### Todo
 
-[ ] -
+[ ] - Restaurant Creation Wizard/Form
+[ ] - API Restaurant Data
+[ ] - Public Website MVP
+[ ] - Menu API
