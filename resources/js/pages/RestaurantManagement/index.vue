@@ -10,6 +10,7 @@
                 :query="query"
                 :total="total"
                 @page-change="handlePageChange"
+                :loading="loading"
             >
             </Datatable>
         </div>

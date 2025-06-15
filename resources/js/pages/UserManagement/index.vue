@@ -13,6 +13,7 @@
                 :query="query"
                 :total="total"
                 @page-change="handlePageChange"
+                :loading="loading"
             >
                 <template #actions="scope">
                     <el-button @click="editUser(scope.row)">Edit</el-button>

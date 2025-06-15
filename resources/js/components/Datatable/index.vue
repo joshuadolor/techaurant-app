@@ -7,6 +7,7 @@
             class="w-full rounded-lg"
             style="background: white"
             v-bind="$attrs"
+            v-loading="props.loading"
         >
             <el-table-column
                 v-for="col in columns"
@@ -51,6 +52,7 @@ const props = defineProps({
     data: { type: Array, required: true },
     query: { type: Object, required: true },
     total: { type: Number, required: true },
+    loading: { type: Boolean, default: false },
 });
 
 const hasActions = computed(() => !!useSlots().actions);
