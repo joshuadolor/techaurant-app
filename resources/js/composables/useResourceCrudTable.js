@@ -1,7 +1,7 @@
 import { ref, watch, reactive } from "vue";
 import ResourceService from "@/services/resource";
 
-export default function useResourceCrudTable(resourceName, initialQuery = {}) {
+export default function useResourceCrudTable(resourceName, model = null, initialQuery = {}) {
     const resourceService = new ResourceService(resourceName);
 
     // List state
@@ -36,7 +36,11 @@ export default function useResourceCrudTable(resourceName, initialQuery = {}) {
             if (query.search === "") delete params.search;
             if (query.sort === "") delete params.sort;
             const response = await resourceService.getAll(params);
-            items.value = response.data.data || response.data;
+            if (model) {
+                items.value = response.data.data.map((item) => new model(item));
+            } else {
+                items.value = response.data.data || response.data;
+            }
             total.value = response.data.meta?.total || response.data.total || 0;
         } catch (err) {
             error.value = err;

@@ -32,9 +32,9 @@
         </el-table>
         <div class="flex justify-end mt-4">
             <el-pagination
-                :current-page="props.query.page"
-                :page-size="props.query.per_page"
-                :total="props.total"
+                :current-page="query.page"
+                :page-size="query.per_page"
+                :total="total"
                 layout="prev, pager, next"
                 @current-change="handlePageChange"
             />

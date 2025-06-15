@@ -59,6 +59,16 @@ const routes = [
         component: () => import('@/pages/RestaurantManagement'),
     },
     {
+        path: '/restaurants/view/:id',
+        name: 'restaurant.view',
+        component: () => import('@/pages/RestaurantManagement/View'),
+    },
+    {
+        path: '/restaurants/create',
+        name: 'restaurant.create',
+        component: () => import('@/pages/RestaurantManagement/Create'),
+    },
+    {
         path: '/account',
         name: 'account',
         component: () => import('@/pages/Account'),

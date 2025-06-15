@@ -17,7 +17,7 @@ interface IResourceRepository
     /**
      * Get paginated records with search, sort, and filter capabilities
      */
-    public function getPaginated(array $params, ?int $perPage = 10): array;
+    public function getPaginated(array $params, ?int $perPage = 6): array;
 
     /**
      * Get all records

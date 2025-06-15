@@ -1,5 +1,8 @@
-class User {
+import BaseModel from "./BaseModel";
+
+class User extends BaseModel {
     constructor(data) {
+        super(data);
         this._name = data.name;
         this._email = data.email;
         this._role = data.role;

@@ -2,18 +2,25 @@
 <template>
     <div>
         <!-- Hamburger for mobile -->
-        <button
-            class="md:hidden p-4 focus:outline-none"
-            @click="open = !open"
-            aria-label="Open sidebar"
-        >
-            <span class="text-2xl">☰</span>
-        </button>
-
+        <div class="flex items-center justify-between">
+            <button
+                class="md:hidden p-4 focus:outline-none"
+                @click="open = !open"
+                aria-label="Open sidebar"
+            >
+                <span class="text-4xl"> ☰ </span>
+            </button>
+            <div
+                class="md:hidden p-6 font-bold text-xl flex items-center gap-2"
+            >
+                <span>🏠</span>
+                <span>TechnoResto</span>
+            </div>
+        </div>
         <!-- Overlay for mobile when sidebar is open -->
         <div
             v-if="open"
-            class="fixed inset-0 bg-black bg-opacity-30 z-30 md:hidden"
+            class="fixed inset-0 bg-black bg-opacity-30 opacity-50 z-30 md:hidden"
             @click="open = false"
         ></div>
 
@@ -68,7 +75,7 @@
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-
+import { ElMessageBox } from "element-plus";
 const open = ref(false);
 
 const navItems = ref([
@@ -100,7 +107,13 @@ if (authStore.isSuperAdmin) {
 }
 const router = useRouter();
 const logout = async () => {
-    await authStore.logout();
-    router.replace({ name: "login" });
+    ElMessageBox.confirm("Are you sure you want to logout?", "Logout", {
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+        type: "warning",
+    }).then(async () => {
+        await authStore.logout();
+        router.replace({ name: "login" });
+    });
 };
 </script>

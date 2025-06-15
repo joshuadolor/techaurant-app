@@ -34,7 +34,7 @@ class ResourceRepository implements IResourceRepository
         return $model;
     }
 
-    public function getPaginated(array $params, ?int $perPage = 10): array
+    public function getPaginated(array $params, ?int $perPage = 6): array
     {
         $query = $this->buildQuery($params);
         $paginator = $query->paginate($perPage);
