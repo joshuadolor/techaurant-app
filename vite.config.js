@@ -15,7 +15,8 @@ export default defineConfig({
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.esm-bundler.js',
-            '@': '/resources/js'
+            '@': '/resources/js',
+            '~images': '/resources/images',
         },
         extensions: ['.js', '.vue', '.json']
     },

@@ -84,9 +84,29 @@ const routes = [
         component: () => import('@/pages/Menus'),
     },
     {
+        path: '/menu-categories',
+        name: 'menu-categories',
+        component: () => import('@/pages/Menus'),
+    },
+    {
+        path: '/menu-items',
+        name: 'menu-items',
+        component: () => import('@/pages/Menus'),
+    },
+    {
+        path: '/tags',
+        name: 'tags',
+        component: () => import('@/pages/Menus'),
+    },
+    {
         path: '/email/resend-verification',
         name: 'resend-verification',
         component: () => import('@/pages/auth/VerifyEmail/resend'),
+    },
+    {
+        path: '/initial-setup',
+        name: 'initial-setup',
+        component: () => import('@/pages/InitialSetup'),
     },
 ]
 

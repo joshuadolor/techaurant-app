@@ -11,10 +11,9 @@
                 <span class="text-4xl"> ☰ </span>
             </button>
             <div
-                class="md:hidden p-6 font-bold text-xl flex items-center gap-2"
+                class="md:hidden p-6 font-bold text-xl flex items-center gap-2 max-w-54 min-w-54"
             >
-                <span>🏠</span>
-                <span>TechnoResto</span>
+                <Logo />
             </div>
         </div>
         <!-- Overlay for mobile when sidebar is open -->
@@ -33,28 +32,63 @@
             ]"
         >
             <div class="p-6 font-bold text-xl flex items-center gap-2">
-                <span>🏠</span>
-                <span>TechnoResto</span>
+                <Logo />
             </div>
             <nav>
                 <ul>
-                    <li v-for="item in navItems" :key="item.name">
-                        <router-link
-                            :to="item.route"
-                            class="flex mx-3 my-2 items-center gap-3 px-6 py-3 rounded-md hover:bg-gray-200 hover:text-gray-900 transition"
-                            :class="{
-                                'bg-black text-white font-semibold': isActive(
-                                    item.route
-                                ),
-                                'text-gray-700': !isActive(item.route),
-                            }"
-                            :aria-current="isActive(item.route) ? 'page' : null"
-                            @click="open = false"
-                        >
-                            <span>{{ item.icon }}</span>
-                            <span>{{ item.label }}</span>
-                        </router-link>
-                    </li>
+                    <template v-for="item in navItems" :key="item.name">
+                        <!-- Regular menu item -->
+                        <li v-if="!item.type">
+                            <router-link
+                                :to="item.route"
+                                class="flex mx-3 my-2 items-center gap-3 px-6 py-3 rounded-md hover:bg-gray-200 hover:text-gray-900 transition"
+                                :class="{
+                                    'bg-black text-white font-semibold':
+                                        isActive(item.route),
+                                    'text-gray-700': !isActive(item.route),
+                                }"
+                                :aria-current="
+                                    isActive(item.route) ? 'page' : null
+                                "
+                                @click="open = false"
+                            >
+                                <span>{{ item.icon }}</span>
+                                <span>{{ item.label }}</span>
+                            </router-link>
+                        </li>
+
+                        <!-- Grouped menu items -->
+                        <template v-else>
+                            <li class="mt-4">
+                                <div
+                                    class="px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                                >
+                                    {{ item.label }}
+                                </div>
+                                <ul class="mt-2">
+                                    <li
+                                        v-for="subItem in item.items"
+                                        :key="subItem.name"
+                                    >
+                                        <router-link
+                                            :to="subItem.route"
+                                            class="flex mx-3 my-1 items-center gap-3 px-6 py-2 rounded-md hover:bg-gray-200 hover:text-gray-900 transition"
+                                            :class="{
+                                                'bg-black text-white font-semibold':
+                                                    isActive(subItem.route),
+                                                'text-gray-700': !isActive(
+                                                    subItem.route
+                                                ),
+                                            }"
+                                        >
+                                            <span>{{ subItem.icon }}</span>
+                                            <span>{{ subItem.label }}</span>
+                                        </router-link>
+                                    </li>
+                                </ul>
+                            </li>
+                        </template>
+                    </template>
                     <li>
                         <a
                             role="button"
@@ -76,20 +110,73 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { ElMessageBox } from "element-plus";
+import Logo from "@/components/Logo";
 const open = ref(false);
 
 const navItems = ref([
+    // Dashboard
     { name: "dashboard", label: "Dashboard", route: "/dashboard", icon: "📊" },
 
-    { name: "account", label: "Account", route: "/account", icon: "📝" },
+    // Menu Management Group
     {
-        name: "restaurants",
-        label: "Restaurants",
-        route: "/restaurants",
-        icon: "🍔",
+        type: "group",
+        label: "Menu Management",
+        items: [
+            { name: "menus", label: "Menus", route: "/menus", icon: "🍽️" },
+            {
+                name: "menu-categories",
+                label: "Categories",
+                route: "/menu-categories",
+                icon: "📑",
+            },
+            {
+                name: "menu-items",
+                label: "Menu Items",
+                route: "/menu-items",
+                icon: "🍔",
+            },
+            {
+                name: "menu-tags",
+                label: "Tags",
+                route: "/tags",
+                icon: "️🏷️",
+            },
+        ],
     },
-    { name: "menus", label: "Menus", route: "/menus", icon: "🍽️" },
-    { name: "settings", label: "Settings", route: "/settings", icon: "⚙️" },
+
+    // Restaurant Management Group
+    {
+        type: "group",
+        label: "Restaurant",
+        items: [
+            {
+                name: "restaurants",
+                label: "Restaurants",
+                route: "/restaurants",
+                icon: "🍔",
+            },
+        ],
+    },
+
+    // Account & Settings Group
+    {
+        type: "group",
+        label: "Account",
+        items: [
+            {
+                name: "account",
+                label: "Profile",
+                route: "/account",
+                icon: "👤",
+            },
+            {
+                name: "settings",
+                label: "Settings",
+                route: "/settings",
+                icon: "⚙️",
+            },
+        ],
+    },
 ]);
 
 const route = useRoute();
@@ -97,12 +184,19 @@ const isActive = (path) => route.path.startsWith(path);
 
 const authStore = useAuthStore();
 
+// Add admin section if user is super admin
 if (authStore.isSuperAdmin) {
     navItems.value.push({
-        name: "users",
-        label: "User Management",
-        route: "/users",
-        icon: "👥",
+        type: "group",
+        label: "Administration",
+        items: [
+            {
+                name: "users",
+                label: "User Management",
+                route: "/users",
+                icon: "👥",
+            },
+        ],
     });
 }
 const router = useRouter();
