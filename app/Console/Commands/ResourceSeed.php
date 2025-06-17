@@ -44,7 +44,7 @@ class ResourceSeed extends Command
     protected function seedResource(string $resource, int $count): int
     {
         $resource = Str::studly($resource);
-        $factoryPath = app_path("Resources/{$resource}/database/factories");
+        $factoryPath = app_path("Resources/{$resource}/Database/Factories");
         
         if (!File::exists($factoryPath)) {
             $this->warn("No factories found for resource: {$resource}");

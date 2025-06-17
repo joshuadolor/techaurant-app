@@ -19,7 +19,7 @@ class ResourceMigrate extends Command
             $this->info('Rolling back resource migrations...');
             
             $result = $this->call('migrate:rollback', [
-                '--path' => 'app/Resources/*/database/migrations',
+                '--path' => 'app/Resources/*/Database/Migrations',
                 '--step' => $this->option('step'),
             ]);
 
@@ -28,7 +28,7 @@ class ResourceMigrate extends Command
             $this->info('Running resource migrations...');
 
             $result = $this->call('migrate', [
-                '--path' => 'app/Resources/*/database/migrations',
+                '--path' => 'app/Resources/*/Database/Migrations',
             ]);
 
             $this->info('Resource migrations completed!');
