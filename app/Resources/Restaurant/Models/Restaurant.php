@@ -10,6 +10,7 @@ use App\Resources\Restaurant\Models\RestaurantConfig;
 use App\Resources\Restaurant\Models\RestaurantContact;
 use App\Resources\Restaurant\Models\RestaurantBusinessHour;
 use App\Resources\Restaurant\Database\Factories\RestaurantFactory;
+use Illuminate\Support\Str;
 
 class Restaurant extends Model
 {
@@ -23,7 +24,7 @@ class Restaurant extends Model
     protected $fillable = [
         'name',
         'slug',
-        'tagline',
+        'tagline', 
         'description',
         'owner_id',
         'subdomain',
@@ -38,6 +39,24 @@ class Restaurant extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected $with = [
+        'config',
+        'businessHours',
+        'contact',
+    ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($restaurant) {
+            $restaurant->slug = Str::slug($restaurant->name) . '-' . $restaurant->owner_id;
+        });
+    }
 
     /**
      * Get the owner of the restaurant.
