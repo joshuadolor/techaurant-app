@@ -1,15 +1,17 @@
 import { ref } from "vue";
-import ApiService from "@/services/api";
+import ResourceService from "@/services/resource";
 
-export default function useApiMethod({ service, method }) {
+export default function useResourceMethod(resourceName, { method }) {
     const loading = ref(false);
     const error = ref(null);
 
-    const execute = async (params = {}) => {
+    const service = new ResourceService(resourceName);
+
+    const execute = async (...args) => {
         loading.value = true;
         error.value = null;
         try {
-            const response = await ApiService[method](service, params);
+            const response = await service[method](...args);
             return response.data;
         } catch (err) {
             error.value = err;

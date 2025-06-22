@@ -6,10 +6,8 @@ use Illuminate\Support\Str;
 
 trait ResourceModelTrait
 {
-    protected static function boot()
+    protected static function bootResourceModelTrait()
     {
-        parent::boot();
-
         static::creating(function ($model) {
             $model->uuid = (string) Str::uuid();
         });

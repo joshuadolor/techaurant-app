@@ -13,12 +13,12 @@ class ResourceService {
         return ApiService.get(`${this.API_URL}/${id}`);
     }
 
-    async create(data) {
-        return ApiService.post(`${this.API_URL}`, data);
+    async create(data, config = {}) {
+        return ApiService.post(`${this.API_URL}`, data, config);
     }
 
-    async update(id, data) {
-        return ApiService.put(`${this.API_URL}/${id}`, data);
+    async update(id, data, config = {}) {
+        return ApiService.put(`${this.API_URL}/${id}`, data, config);
     }
 
     async delete(id) {

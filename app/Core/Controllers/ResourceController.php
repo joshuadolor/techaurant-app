@@ -38,7 +38,7 @@ class ResourceController extends BaseController implements IResourceController
 
     public function store(Request $request): JsonResponse
     {
-        $rules = $this->validationRules['store'] ?? [];
+        $rules = $this->getValidationRules('store', $request);
         $validatedData = $this->validator->validate($request, $rules);
         $data = $this->service->create($validatedData);
         return $this->successResponse($data, "{$this->label} created successfully", 201);
@@ -52,7 +52,7 @@ class ResourceController extends BaseController implements IResourceController
 
     public function update(Request $request, string $identifier): JsonResponse
     {
-        $rules = $this->validationRules['update'] ?? [];
+        $rules = $this->getValidationRules('update', $request);
         $validatedData = $this->validator->validate($request, $rules);
         $data = $this->service->update($identifier, $validatedData);
         return $this->successResponse($data, "{$this->label} updated successfully");
@@ -62,5 +62,10 @@ class ResourceController extends BaseController implements IResourceController
     {
         $this->service->delete($identifier);
         return $this->successResponse(null, "{$this->label} deleted successfully", 204);
+    }
+
+    public function getValidationRules(string $type, Request $request): array
+    {
+        return $this->validationRules[$type] ?? [];
     }
 }

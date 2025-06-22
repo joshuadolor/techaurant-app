@@ -29,6 +29,9 @@ class Restaurant extends Model
         'owner_id',
         'subdomain',
         'is_active',
+        'contact', // Add this to handle nested contact data
+        'config',  // Add this to handle nested config data
+        'business_hours', // Add this to handle nested business hours data
     ];
 
     /**
@@ -54,7 +57,54 @@ class Restaurant extends Model
         parent::boot();
 
         static::creating(function ($restaurant) {
-            $restaurant->slug = Str::slug($restaurant->name) . '-' . $restaurant->owner_id;
+            $restaurant->slug = Str::slug($restaurant->name) . '-' . $restaurant->owner_id * rand(1, 100);
+        });
+
+        // Create related records after restaurant is created
+        static::created(function ($restaurant) {
+            // Create contact if provided
+            $contact = array_merge([
+                'phone' => '',
+                'email' => '',
+                'address' => '',
+            ], $restaurant->contact ?? []);
+            $restaurant->contact()->create($contact);
+
+            $config = array_merge([
+                    'theme' => 'default',
+                    'currency' => 'USD',
+                    'primary_color' => '#D35400',
+                    'secondary_color' => '#2C3E50',
+                    'timezone' => 'UTC',
+                    'language' => 'en',
+                ], $restaurant->config ?? []);
+            $restaurant->config()->create($config);
+
+            $businessHours = $restaurant->business_hours;
+            if (isset($businessHours) && is_array($businessHours)) {
+                foreach ($businessHours as $businessHour) {
+                    $restaurant->businessHours()->create($businessHour);
+                }
+            } else {
+                $defaultDays = [
+                    'monday' => ['09:00', '17:00'],
+                    'tuesday' => ['09:00', '17:00'],
+                    'wednesday' => ['09:00', '17:00'],
+                    'thursday' => ['09:00', '17:00'],
+                    'friday' => ['09:00', '17:00'],
+                    'saturday' => ['10:00', '16:00'],
+                    'sunday' => ['10:00', '16:00'],
+                ];
+
+                foreach ($defaultDays as $day => $hours) {
+                    $restaurant->businessHours()->create([
+                        'day_of_week' => $day,
+                        'open_time' => $hours[0],
+                        'close_time' => $hours[1],
+                        'is_open' => true,
+                    ]);
+                }
+            }
         });
     }
 

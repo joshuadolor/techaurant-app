@@ -190,9 +190,9 @@ class ResourceRepository implements IResourceRepository
     protected function executeInTransaction(callable $callback)
     {
         try {
-            return DB::transaction($callback);
+            return \DB::transaction($callback);
         } catch (\Exception $e) {
-            Log::error('Transaction failed: ' . $e->getMessage());
+            \Log::error('Transaction failed: ' . $e->getMessage());
             throw $e;
         }
     }

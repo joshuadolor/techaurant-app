@@ -58,8 +58,6 @@ import AccountService from "@/services/account";
 import { notify } from "@/utils/notification";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-
 const isSubmitting = ref(false);
 const defaultForm = {
     current_password: "",

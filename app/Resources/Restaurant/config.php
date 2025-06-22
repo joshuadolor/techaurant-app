@@ -3,12 +3,11 @@
 return [
     [
         'name' => 'restaurants',
-        'controller' => 'App\Resources\Restaurant\Controllers\RestaurantController',
+        'controller' => App\Resources\Restaurant\Controllers\RestaurantController::class,
         'model' => App\Resources\Restaurant\Models\Restaurant::class,
         'validation' => [
             'store' => [
                 'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:restaurants,slug',
                 'description' => 'nullable|string',
                 'owner_id' => 'required|exists:users,id',
                 'subdomain' => 'nullable|string|max:255|unique:restaurants,subdomain',
@@ -17,7 +16,6 @@ return [
             ],
             'update' => [
                 'name' => 'sometimes|string|max:255',
-                'slug' => 'sometimes|string|max:255|unique:restaurants,slug,{id}',
                 'description' => 'sometimes|string',
                 'owner_id' => 'sometimes|exists:users,id',
                 'subdomain' => 'sometimes|string|max:255|unique:restaurants,subdomain,{id}',

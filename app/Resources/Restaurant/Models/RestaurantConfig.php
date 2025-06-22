@@ -10,6 +10,8 @@ class RestaurantConfig extends Model
 {
     use HasFactory, ResourceModelTrait;
 
+    protected $table = 'restaurant_config';
+
     /**
      * The attributes that are mass assignable.
      *
