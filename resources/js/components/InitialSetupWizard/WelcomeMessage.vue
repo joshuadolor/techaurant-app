@@ -10,24 +10,13 @@
 
         <div class="max-w-4xl mx-auto text-center p-1 md:px-4">
             <!-- Animated Logo/Icon with Progress -->
-            <div class="welcome-icon mb-6 md:mb-8 relative">
-                <el-icon
-                    :size="64"
-                    class="text-5xl md:text-6xl text-primary-500"
-                >
-                    <Shop />
-                </el-icon>
+            <div class="welcome-icon w-25 h-25 mx-auto mb-6 md:mb-8 relative">
+                <SmallLogo />
             </div>
 
             <!-- Welcome Text with Typing Effect -->
             <h1
-                class="text-2xl md:text-4xl font-bold mb-3 md:mb-4 typing-effect"
-                style="
-                    background: linear-gradient(to right, #2563eb, #ec4899);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                "
+                class="text-2xl text-[#f08a5c] md:text-4xl font-bold mb-3 md:mb-4 typing-effect"
             >
                 Welcome to TechnoResto!
             </h1>
@@ -108,6 +97,7 @@ import {
     Connection,
 } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import SmallLogo from "@/components/Logo/SmallLogo";
 
 const emit = defineEmits(["start"]);
 const progress = ref(0);

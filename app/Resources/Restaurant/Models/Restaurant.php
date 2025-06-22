@@ -40,10 +40,10 @@ class Restaurant extends Model
         'is_active' => 'boolean',
     ];
 
-    protected $with = [
+    protected $withExists = [
         'config',
         'businessHours',
-        'contact',
+        'contact', 
     ];
 
     /**

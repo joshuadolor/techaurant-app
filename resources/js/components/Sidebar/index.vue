@@ -1,4 +1,3 @@
-<!-- resources/js/components/Sidebar.vue -->
 <template>
     <div>
         <!-- Hamburger for mobile -->
@@ -26,9 +25,9 @@
         <!-- Sidebar -->
         <aside
             :class="[
-                'fixed top-0 left-0 h-full w-64 bg-gray-100 border-gray-200 border-r z-40 transform transition-transform duration-200',
+                'fixed top-0 left-0 h-screen w-64 bg-gray-100 border-gray-200 border-r z-40 transform transition-transform duration-200 overflow-y-auto',
                 open ? 'translate-x-0' : '-translate-x-full',
-                'md:static md:translate-x-0 md:block',
+                'md:static md:translate-x-0 md:block md:h-screen md:sticky md:top-0',
             ]"
         >
             <div class="p-6 font-bold text-xl flex items-center gap-2">

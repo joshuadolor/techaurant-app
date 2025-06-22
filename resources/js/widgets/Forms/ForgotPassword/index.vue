@@ -50,7 +50,6 @@ const rules = computed(() => getRules());
 
 const handleSubmit = async (values) => {
     const data = await AccountService.forgotPassword(values);
-    console.log(data);
     notify.success(data.message);
     router.replace({ name: "login" });
 };
