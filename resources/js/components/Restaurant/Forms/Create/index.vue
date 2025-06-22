@@ -130,6 +130,10 @@ const props = defineProps({
         type: String,
         default: "Submit",
     },
+    submitAction: {
+        type: Function,
+        required: true,
+    },
 });
 
 const emit = defineEmits(["update:modelValue", "back", "submit"]);
@@ -170,8 +174,7 @@ const cropImage = () => {
 };
 
 const handleSubmit = async (values) => {
-    emit("update:modelValue", values);
-    emit("submit", values);
+    await props.submitAction(values);
 };
 </script>
 
@@ -215,11 +218,6 @@ const handleSubmit = async (values) => {
     background: #eee;
 }
 
-.cropper-dialog {
-    /* Add any custom styles for the cropper dialog */
-}
-
-/* Mobile-specific cropper styles */
 @media (max-width: 768px) {
     .cropper {
         height: calc(100vh - 200px);

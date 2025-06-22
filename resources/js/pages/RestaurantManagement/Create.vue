@@ -3,7 +3,7 @@
         <div>
             <RestaurantCreate
                 :model-value="restaurant"
-                @submit="handleSubmit"
+                :submitAction="handleSubmit"
             />
         </div>
     </AuthenticatedLayout>
