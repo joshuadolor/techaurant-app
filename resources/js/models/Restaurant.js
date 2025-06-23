@@ -1,4 +1,5 @@
 import BaseModel from "./BaseModel";
+import RestaurantConfig from "./RestaurantConfig";
 
 class Restaurant extends BaseModel {
     constructor(data) {
@@ -11,6 +12,7 @@ class Restaurant extends BaseModel {
         this._logo = data.logo;
         this._is_active = !!data.is_active;
         this._is_verified = !!data.is_verified;
+        this._config = new RestaurantConfig(data.config);
     }
 
     get name() {
@@ -43,6 +45,10 @@ class Restaurant extends BaseModel {
 
     get isVerified() {
         return this._is_verified;
+    }
+
+    get logoUrl() {
+        return this._config.logoUrl;
     }
 }
 

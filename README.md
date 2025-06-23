@@ -63,6 +63,8 @@ docker compose exec app php artisan resource:migrate
 # Seed the database with initial data
 docker compose exec app php artisan db:seed
 
+docker compose exec app php artisan storage:link
+
 #install resources
 
 # Install and build frontend assets
@@ -95,3 +97,7 @@ app/Models/User.php - this should be defined here
 [ ] - API Restaurant Data
 [ ] - Public Website MVP
 [ ] - Menu API
+.
+.
+.
+[ ] - decouple usage of request() on the models

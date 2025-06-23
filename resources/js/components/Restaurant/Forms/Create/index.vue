@@ -41,7 +41,16 @@
                 accept="image/*"
                 @change="handleFileChange"
             >
-                <img v-if="form.logo" :src="form.logo" class="logo" />
+                <img
+                    v-if="form.logoPreview || form.logo"
+                    :src="
+                        form.logoPreview ||
+                        (form.logo instanceof File
+                            ? URL.createObjectURL(form.logo)
+                            : form.logo)
+                    "
+                    class="logo"
+                />
                 <el-icon v-else class="logo-uploader-icon">
                     <Plus />
                 </el-icon>
@@ -169,8 +178,23 @@ const handleFileChange = (file) => {
 
 const cropImage = () => {
     const { canvas } = cropper.value.getResult();
-    form.logo = canvas.toDataURL();
-    showCropper.value = false;
+
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+        // Create a File object from the blob
+        const file = new File([blob], "cropped-logo.png", {
+            type: "image/png",
+            lastModified: Date.now(),
+        });
+
+        // Store the file object instead of base64
+        form.logo = file;
+
+        // Also store the preview URL for display
+        form.logoPreview = canvas.toDataURL();
+
+        showCropper.value = false;
+    }, "image/png");
 };
 
 const handleSubmit = async (values) => {

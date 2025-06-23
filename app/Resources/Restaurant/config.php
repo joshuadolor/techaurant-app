@@ -13,6 +13,7 @@ return [
                 'subdomain' => 'nullable|string|max:255|unique:restaurants,subdomain',
                 'is_active' => 'boolean',
                 'tagline' => 'nullable|string|max:255',
+                'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ],
             'update' => [
                 'name' => 'sometimes|string|max:255',

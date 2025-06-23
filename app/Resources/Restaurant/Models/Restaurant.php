@@ -29,9 +29,7 @@ class Restaurant extends Model
         'owner_id',
         'subdomain',
         'is_active',
-        'contact', // Add this to handle nested contact data
-        'config',  // Add this to handle nested config data
-        'business_hours', // Add this to handle nested business hours data
+    
     ];
 
     /**
@@ -43,7 +41,7 @@ class Restaurant extends Model
         'is_active' => 'boolean',
     ];
 
-    protected $withExists = [
+    protected $with = [
         'config',
         'businessHours',
         'contact', 
@@ -70,15 +68,20 @@ class Restaurant extends Model
             ], $restaurant->contact ?? []);
             $restaurant->contact()->create($contact);
 
-            $config = array_merge([
-                    'theme' => 'default',
-                    'currency' => 'USD',
-                    'primary_color' => '#D35400',
-                    'secondary_color' => '#2C3E50',
-                    'timezone' => 'UTC',
-                    'language' => 'en',
-                ], $restaurant->config ?? []);
-            $restaurant->config()->create($config);
+            $configData = [
+                'theme' => 'default',
+                'currency' => 'USD',
+                'primary_color' => '#D35400',
+                'secondary_color' => '#2C3E50',
+                'timezone' => 'UTC',
+                'language' => 'en',
+            ];
+
+            if(request()->has('logo_url')){
+                $configData['logo_url'] = request()->logo_url;
+            }
+
+            $restaurant->config()->create($configData);
 
             $businessHours = $restaurant->business_hours;
             if (isset($businessHours) && is_array($businessHours)) {

@@ -7,9 +7,9 @@
         <!-- Restaurant Image/Logo -->
         <div class="relative aspect-video rounded-lg overflow-hidden">
             <el-image
-                :src="item.cover_image || item.logo"
-                fit="cover"
+                :src="item.cover_image || item.logoUrl"
                 class="w-full h-full"
+                fit="cover"
             >
                 <template #error>
                     <div
@@ -25,6 +25,7 @@
                     :type="item.isActive ? 'success' : 'danger'"
                     size="small"
                     effect="dark"
+                    class="shadow-lg"
                 >
                     {{ item.isActive ? "Open" : "Closed" }}
                 </el-tag>
