@@ -23,7 +23,7 @@
             <div class="absolute top-2 right-2">
                 <el-tag
                     :type="item.isActive ? 'success' : 'danger'"
-                    size="small"
+                    size="medium"
                     effect="dark"
                     class="shadow-lg"
                 >

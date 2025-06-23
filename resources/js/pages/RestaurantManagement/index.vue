@@ -8,14 +8,16 @@
 
                 <!-- View Toggle -->
                 <div class="flex items-center gap-4 justify-between">
-                    <el-radio-group v-model="viewMode" size="small">
-                        <el-radio-button label="table">
-                            <el-icon><Grid /></el-icon>
-                        </el-radio-button>
-                        <el-radio-button label="grid">
-                            <el-icon><Menu /></el-icon>
-                        </el-radio-button>
-                    </el-radio-group>
+                    <div class="hidden">
+                        <el-radio-group v-model="viewMode" size="small">
+                            <el-radio-button label="table">
+                                <el-icon><Grid /></el-icon>
+                            </el-radio-button>
+                            <el-radio-button label="grid">
+                                <el-icon><Menu /></el-icon>
+                            </el-radio-button>
+                        </el-radio-group>
+                    </div>
 
                     <el-button type="primary" @click="createRestaurant">
                         Add Restaurant
