@@ -1,5 +1,6 @@
 import BaseModel from "./BaseModel";
 import RestaurantConfig from "./RestaurantConfig";
+import { formatDate } from "@/utils/Date";
 
 class Restaurant extends BaseModel {
     constructor(data) {
@@ -14,6 +15,7 @@ class Restaurant extends BaseModel {
         this._is_active = !!data.is_active;
         this._is_verified = !!data.is_verified;
         this._config = new RestaurantConfig(data.config);
+        this._created_at = data.created_at;
     }
 
     get name() {
@@ -54,6 +56,10 @@ class Restaurant extends BaseModel {
 
     get logoUrl() {
         return this._config.logoUrl;
+    }
+
+    get createdAt() {
+        return formatDate(this._created_at);
     }
 }
 
