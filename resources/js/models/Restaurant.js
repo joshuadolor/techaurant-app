@@ -5,6 +5,7 @@ class Restaurant extends BaseModel {
     constructor(data) {
         super(data);
         this._name = data.name;
+        this._tagline = data.tagline;
         this._address = data.address;
         this._phone = data.phone;
         this._email = data.email;
@@ -17,6 +18,10 @@ class Restaurant extends BaseModel {
 
     get name() {
         return this._name;
+    }
+
+    get tagline() {
+        return this._tagline;
     }
 
     get address() {

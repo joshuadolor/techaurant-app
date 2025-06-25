@@ -1,9 +1,10 @@
 import { ref } from "vue";
 import ResourceService from "@/services/resource";
 
-export default function useResourceMethod(resourceName, { method }) {
+export default function useResourceMethod(resourceName, { method, model = null }) {
     const loading = ref(false);
     const error = ref(null);
+    const item = ref(null);
 
     const service = new ResourceService(resourceName);
 
@@ -12,7 +13,11 @@ export default function useResourceMethod(resourceName, { method }) {
         error.value = null;
         try {
             const response = await service[method](...args);
-            return response.data;
+            item.value = response.data;
+            if (model) {
+                item.value = new model(response.data);
+            }
+            return item.value;
         } catch (err) {
             error.value = err;
             throw err;
@@ -24,6 +29,7 @@ export default function useResourceMethod(resourceName, { method }) {
     return {
         loading,
         error,
+        item,
         execute,
     };
 }
