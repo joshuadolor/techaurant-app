@@ -17,8 +17,10 @@ import RestaurantCreate from "@/components/Restaurant/Forms/Create";
 import useResourceMethod from "@/composables/useResourceMethod";
 import { jsonToFormData } from "@/utils/formData";
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const router = useRouter();
 
 const { loading, execute: createRestaurant } = useResourceMethod(
     "restaurants",
@@ -41,11 +43,19 @@ const restaurant = ref({
 });
 
 const handleSubmit = async (data) => {
-    data.contact = { ...data.contact };
-    const formData = jsonToFormData(data);
-    await createRestaurant(formData, {
+    const cleanedData = { ...data };
+    delete cleanedData.logoPreview;
+    const formData = jsonToFormData(cleanedData);
+    const restaurant = await createRestaurant(formData, {
         headers: {
             "Content-Type": "multipart/form-data",
+        },
+    });
+
+    router.replace({
+        name: "restaurant.view",
+        params: {
+            id: restaurant.uuid,
         },
     });
 };
