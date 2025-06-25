@@ -23,11 +23,10 @@
             <div class="absolute top-2 right-2">
                 <el-tag
                     :type="item.isActive ? 'success' : 'danger'"
-                    size="medium"
                     effect="dark"
-                    class="shadow-lg"
+                    class="shadow-lg shadow-white/50"
                 >
-                    {{ item.isActive ? "Open" : "Closed" }}
+                    {{ item.isActive ? "Active" : "Inactive" }}
                 </el-tag>
             </div>
         </div>

@@ -34,6 +34,18 @@
                 <!-- Info Tab -->
                 <el-tab-pane label="Restaurant Information" name="info">
                     <div class="tab-content">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="tab-title">Restaurant Information</h3>
+                            <el-button
+                                type="primary"
+                                size="small"
+                                @click="editTab('info')"
+                                class="flex items-center gap-2"
+                            >
+                                <el-icon><Edit /></el-icon>
+                                Edit Info
+                            </el-button>
+                        </div>
                         <div class="info-grid">
                             <div class="info-item">
                                 <label class="info-label">Name</label>
@@ -71,7 +83,18 @@
                 <!-- Contact Tab -->
                 <el-tab-pane label="Contact Information" name="contact">
                     <div class="tab-content">
-                        <h3 class="tab-title">Contact Information</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="tab-title">Contact Information</h3>
+                            <el-button
+                                type="primary"
+                                size="small"
+                                @click="editTab('contact')"
+                                class="flex items-center gap-2"
+                            >
+                                <el-icon><Edit /></el-icon>
+                                Edit Contact
+                            </el-button>
+                        </div>
                         <div v-if="item?.contact" class="contact-grid">
                             <div class="contact-item">
                                 <label class="contact-label">Email</label>
@@ -130,7 +153,18 @@
                 <!-- Business Hours Tab -->
                 <el-tab-pane label="Business Hours" name="hours">
                     <div class="tab-content">
-                        <h3 class="tab-title">Business Hours</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="tab-title">Business Hours</h3>
+                            <el-button
+                                type="primary"
+                                size="small"
+                                @click="editTab('hours')"
+                                class="flex items-center gap-2"
+                            >
+                                <el-icon><Edit /></el-icon>
+                                Edit Hours
+                            </el-button>
+                        </div>
                         <div
                             v-if="
                                 item.business_hours &&
@@ -174,7 +208,18 @@
                 <!-- Settings Tab -->
                 <el-tab-pane label="Settings" name="settings">
                     <div class="tab-content">
-                        <h3 class="tab-title">Restaurant Settings</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="tab-title">Restaurant Settings</h3>
+                            <el-button
+                                type="primary"
+                                size="small"
+                                @click="editTab('settings')"
+                                class="flex items-center gap-2"
+                            >
+                                <el-icon><Edit /></el-icon>
+                                Edit Settings
+                            </el-button>
+                        </div>
                         <div v-if="item.config" class="settings-grid">
                             <div class="setting-item">
                                 <label class="setting-label">Currency</label>
@@ -243,8 +288,8 @@ const { item, loading, error, execute } = useResourceMethod("restaurants", {
     model: Restaurant,
 });
 
-const editRestaurant = () => {
-    router.push(`/restaurants/${id}/edit`);
+const editTab = (tabName) => {
+    router.push(`/restaurants/${id}/edit?tab=${tabName}`);
 };
 
 const formatTime = (time) => {

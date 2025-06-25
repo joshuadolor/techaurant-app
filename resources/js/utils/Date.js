@@ -8,5 +8,9 @@ export const formatDate = (date, customFormat = defaultDateTimeFormat) => {
         date = new Date(date);
     }
 
-    return format(date, customFormat);
+    if (date instanceof Date) {
+        return format(date, customFormat);
+    }
+
+    return "";
 };
