@@ -30,7 +30,7 @@
 
         <!-- Pagination -->
         <div
-            v-if="items.length > 0 && !loading && query.page > 1"
+            v-if="items.length > 0 && !loading"
             class="flex justify-center mt-6"
         >
             <el-pagination

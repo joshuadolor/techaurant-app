@@ -38,7 +38,7 @@ const restaurant = ref({
         phone: Math.random().toString(36).substring(2, 15),
         email: authStore.getUserEmail,
         address: "",
-        country_id: 3,
+        country_id: Math.floor(Math.random() * 236) + 1,
     },
 });
 

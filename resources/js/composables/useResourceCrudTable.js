@@ -16,7 +16,7 @@ export default function useResourceCrudTable(resourceName, model = null, initial
     // Query state
     const query = reactive({
         page: 1,
-        perPage: 10,
+        perPage: 6,
         search: "",
         sort: "",
         ...initialQuery,
