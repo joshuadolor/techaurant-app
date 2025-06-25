@@ -1,5 +1,10 @@
 <template>
-    <el-form-item :label="label" :prop="prop" :error="errorMessage">
+    <el-form-item
+        :label="label"
+        :prop="prop"
+        :error="errorMessage"
+        :class="`${className}`"
+    >
         <slot></slot>
     </el-form-item>
 </template>
@@ -16,6 +21,10 @@ const props = defineProps({
     prop: {
         type: String,
         required: true,
+    },
+    className: {
+        type: String,
+        default: "",
     },
 });
 

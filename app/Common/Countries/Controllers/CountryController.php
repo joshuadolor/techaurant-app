@@ -12,6 +12,11 @@ class CountryController extends Controller
     public function index()
     {
         $countries = Country::all();
-        return $this->successResponse($countries, 'Countries fetched successfully');
+        $priorityCountries = ['US', 'ES', 'PH'];
+        $countries = $countries->sortBy(function($country) use ($priorityCountries) {
+            $index = array_search($country->code, $priorityCountries);
+            return $index !== false ? $index : PHP_INT_MAX;
+        });
+        return $this->successResponse($countries->values()->toArray(), 'Countries fetched successfully');
     }
 }

@@ -16,6 +16,59 @@
 
         <!-- Main Form Content -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Right Column - Logo Upload -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <el-icon class="section-icon"><Picture /></el-icon>
+                    Restaurant Logo
+                </h3>
+
+                <div class="logo-upload-container">
+                    <BaseFormItem label="Upload Logo" prop="logo">
+                        <el-upload
+                            class="logo-uploader flex justify-center items-center p-4"
+                            :show-file-list="false"
+                            :auto-upload="false"
+                            accept="image/*"
+                            @change="handleFileChange"
+                        >
+                            <div class="logo-upload-area">
+                                <img
+                                    v-if="form.logoPreview || form.logo"
+                                    :src="
+                                        form.logoPreview ||
+                                        (form.logo instanceof File
+                                            ? URL.createObjectURL(form.logo)
+                                            : form.logo)
+                                    "
+                                    class="logo-preview"
+                                />
+                                <div v-else class="logo-placeholder p-4">
+                                    <el-icon class="logo-uploader-icon">
+                                        <Plus />
+                                    </el-icon>
+                                    <p class="upload-text">
+                                        Click to upload logo
+                                    </p>
+                                    <p class="upload-hint">
+                                        PNG, JPG up to 2MB
+                                    </p>
+                                </div>
+                            </div>
+                        </el-upload>
+                    </BaseFormItem>
+
+                    <div class="logo-tips">
+                        <h4>Logo Tips:</h4>
+                        <ul>
+                            <li>Use a square image (1:1 ratio)</li>
+                            <li>High resolution (at least 200x200px)</li>
+                            <li>Clear background works best</li>
+                            <li>Keep file size under 2MB</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             <!-- Left Column - Basic Info -->
             <div class="form-section">
                 <h3 class="section-title">
@@ -44,65 +97,11 @@
                         <el-input
                             v-model="form.description"
                             type="textarea"
-                            :rows="4"
+                            :rows="6"
                             placeholder="Tell customers about your restaurant, cuisine, atmosphere, and what makes you special"
                             size="large"
                         />
                     </BaseFormItem>
-                </div>
-            </div>
-
-            <!-- Right Column - Logo Upload -->
-            <div class="form-section">
-                <h3 class="section-title">
-                    <el-icon class="section-icon"><Picture /></el-icon>
-                    Restaurant Logo
-                </h3>
-
-                <div class="logo-upload-container">
-                    <BaseFormItem label="Upload Logo" prop="logo">
-                        <el-upload
-                            class="logo-uploader"
-                            :show-file-list="false"
-                            :auto-upload="false"
-                            accept="image/*"
-                            @change="handleFileChange"
-                        >
-                            <div class="logo-upload-area">
-                                <img
-                                    v-if="form.logoPreview || form.logo"
-                                    :src="
-                                        form.logoPreview ||
-                                        (form.logo instanceof File
-                                            ? URL.createObjectURL(form.logo)
-                                            : form.logo)
-                                    "
-                                    class="logo-preview"
-                                />
-                                <div v-else class="logo-placeholder">
-                                    <el-icon class="logo-uploader-icon">
-                                        <Plus />
-                                    </el-icon>
-                                    <p class="upload-text">
-                                        Click to upload logo
-                                    </p>
-                                    <p class="upload-hint">
-                                        PNG, JPG up to 2MB
-                                    </p>
-                                </div>
-                            </div>
-                        </el-upload>
-                    </BaseFormItem>
-
-                    <div class="logo-tips">
-                        <h4>Logo Tips:</h4>
-                        <ul>
-                            <li>Use a square image (1:1 ratio)</li>
-                            <li>High resolution (at least 200x200px)</li>
-                            <li>Clear background works best</li>
-                            <li>Keep file size under 2MB</li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -267,6 +266,7 @@ const {
 } = useApiMethod({
     service: "common/countries",
     method: "get",
+    shouldCache: true,
 });
 
 const isSubmitting = ref(false);
@@ -325,7 +325,6 @@ const cropImage = () => {
 };
 
 const handleSubmit = async (values) => {
-    console.log(values);
     await props.submitAction(values);
 };
 </script>

@@ -20,7 +20,7 @@ export function jsonToFormData(data, prefix = '') {
         } else if (typeof value === 'object' && !Array.isArray(value)) {
             // Handle nested objects
             Object.keys(value).forEach(subKey => {
-                appendValue(subKey, value[subKey]);
+                appendValue(`${key}[${subKey}]`, value[subKey]);
             });
         } else if (Array.isArray(value)) {
             // Handle arrays

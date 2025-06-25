@@ -28,12 +28,12 @@ const { loading, execute: createRestaurant } = useResourceMethod(
 );
 
 const restaurant = ref({
-    name: "5efgs",
+    name: "test restaurant " + Math.random().toString(36).substring(2, 15),
     tagline: "",
     description: "",
     logo: "",
     contact: {
-        phone: "12312",
+        phone: Math.random().toString(36).substring(2, 15),
         email: authStore.getUserEmail,
         address: "",
         country_id: 3,
