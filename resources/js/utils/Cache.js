@@ -19,5 +19,4 @@ export default class Cache {
     static has(key) {
         return storage?.hasOwnProperty(key);
     }
-
 }

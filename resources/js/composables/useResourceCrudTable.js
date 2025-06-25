@@ -11,7 +11,7 @@ export default function useResourceCrudTable(resourceName, model = null, initial
     const error = ref(null);
 
     // Single item state
-    const item = ref(null);
+    const item = ref({});
 
     // Query state
     const query = reactive({
