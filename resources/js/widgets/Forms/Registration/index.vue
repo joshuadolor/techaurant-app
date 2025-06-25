@@ -68,10 +68,10 @@ const router = useRouter();
 const isSubmitting = ref(false);
 const authStore = useAuthStore();
 const form = reactive({
-    name: "Juan Tamad",
-    email: "juan@tamad.com",
-    password: "password",
-    password_confirmation: "password",
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
 });
 
 const rules = computed(() => getRules(form));

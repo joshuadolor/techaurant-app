@@ -60,8 +60,8 @@ const authStore = useAuthStore();
 const isSubmitting = ref(false);
 
 const form = reactive({
-    email: "juan@tamad.com",
-    password: "password",
+    email: "",
+    password: "",
     remember: false,
 });
 
