@@ -65,7 +65,9 @@ class Restaurant extends Model
                 'phone' => '',
                 'email' => '',
                 'address' => '',
-            ], $restaurant->contact ?? []);
+            ], request()->contact ?? []);
+
+            dd(request()->contact);
             $restaurant->contact()->create($contact);
 
             $configData = [

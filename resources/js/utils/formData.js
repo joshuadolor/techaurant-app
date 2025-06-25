@@ -8,6 +8,7 @@ export function jsonToFormData(data, prefix = '') {
     const formData = new FormData();
 
     function appendValue(key, value) {
+        console.log(key, value);
         const fullKey = prefix ? `${prefix}[${key}]` : key;
 
         if (value === null || value === undefined) {

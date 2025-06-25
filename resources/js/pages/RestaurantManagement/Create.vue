@@ -28,18 +28,20 @@ const { loading, execute: createRestaurant } = useResourceMethod(
 );
 
 const restaurant = ref({
-    name: "",
+    name: "5efgs",
     tagline: "",
     description: "",
     logo: "",
     contact: {
-        phone: "",
+        phone: "12312",
         email: authStore.getUserEmail,
         address: "",
+        country_id: 3,
     },
 });
 
 const handleSubmit = async (data) => {
+    data.contact = { ...data.contact };
     const formData = jsonToFormData(data);
     await createRestaurant(formData, {
         headers: {
