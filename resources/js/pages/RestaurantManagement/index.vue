@@ -20,7 +20,7 @@
                     </div>
 
                     <el-button type="primary" @click="createRestaurant">
-                        Add Restaurant
+                        Create your Restaurant
                     </el-button>
                 </div>
             </div>

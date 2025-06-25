@@ -28,6 +28,23 @@ class RestaurantController extends ResourceController
         return $this->successResponse($data, "{$this->label} created successfully", 201);
     }
 
+    public function update(Request $request, string $identifier): JsonResponse
+    {
+        $rules = $this->getValidationRules('update', $request);
+        $validatedData = $this->validator->validate($request, $rules);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $fileUploadService = app(FileUploadService::class);
+            $logoUrl = $fileUploadService->uploadLogo($request->file('logo'));
+            
+            $request->merge(['logo_url' => $logoUrl]);
+        }
+
+        $data = $this->service->update($identifier, $validatedData);
+        return $this->successResponse($data, "{$this->label} updated successfully");
+    }
+
     public function getValidationRules(string $type, Request $request): array
     {
         $rules = $this->validationRules[$type] ?? [];

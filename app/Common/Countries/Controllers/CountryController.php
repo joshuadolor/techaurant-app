@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Resources\Restaurant\Controllers;
+namespace App\Common\Countries\Controllers;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
 use App\Models\Country;

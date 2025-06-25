@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\SocialAuthController;
-use App\Resources\Restaurant\Controllers\CountryController;
+use App\Common\Countries\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('account')->group(function () {
@@ -34,8 +34,10 @@ Route::prefix('auth')->group(function () {
         Route::get('logout', [AuthController::class, 'logout']);
     });
 
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('common')->group(function () {
         Route::get('/countries', [CountryController::class, 'index']);
     });
-
 });

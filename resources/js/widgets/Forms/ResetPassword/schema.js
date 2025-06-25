@@ -1,4 +1,3 @@
-// Custom validator for password confirmation
 const validatePasswordConfirmation = (rule, value, callback, form) => {
     if (value !== form.password) {
         callback(new Error('Passwords do not match'))

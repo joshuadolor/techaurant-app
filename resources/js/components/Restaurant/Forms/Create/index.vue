@@ -27,7 +27,7 @@
             <el-input
                 v-model="form.description"
                 type="textarea"
-                rows="4"
+                :rows="4"
                 placeholder="Tell customers about your restaurant"
             />
         </BaseFormItem>
@@ -98,9 +98,26 @@
             <el-input
                 v-model="form.contact.address"
                 type="textarea"
-                rows="2"
+                :rows="2"
                 placeholder="Enter your restaurant address"
             />
+        </BaseFormItem>
+
+        <BaseFormItem label="Country" prop="contact.country">
+            <el-select
+                v-model="form.contact.country"
+                placeholder="Select a country"
+                filterable
+                clearable
+                :loading="isFetchingCountries"
+            >
+                <el-option
+                    v-for="country in countries"
+                    :key="country.id"
+                    :label="country.name"
+                    :value="country.id"
+                />
+            </el-select>
         </BaseFormItem>
 
         <!-- Navigation Buttons -->
@@ -125,6 +142,7 @@ import { Plus } from "@element-plus/icons-vue";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 import { getRules } from "./schema";
+import useApiMethod from "@/composables/useApiMethod";
 
 const props = defineProps({
     modelValue: {
@@ -146,6 +164,21 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:modelValue", "back", "submit"]);
+
+const {
+    loading: isFetchingCountries,
+    error: fetchCountriesError,
+    execute: fetchCountries,
+} = useApiMethod({
+    service: "common/countries",
+    method: "get",
+});
+
+const countries = ref([]);
+
+fetchCountries().then((data) => {
+    countries.value = data;
+});
 
 const isSubmitting = ref(false);
 const form = reactive({ ...props.modelValue });

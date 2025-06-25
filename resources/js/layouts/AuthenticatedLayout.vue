@@ -34,7 +34,7 @@
                 </div>
             </header>
             <!-- Main slot for page content -->
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 max-w-[1200px]">
                 <slot />
             </main>
         </div>
