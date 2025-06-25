@@ -34,6 +34,7 @@ import { ref, onMounted } from "vue";
 import Datatable from "@/components/Datatable";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import useResourceCrudTable from "@/composables/useResourceCrudTable";
+import { ElMessageBox } from "element-plus";
 
 const {
     items: users,
@@ -66,7 +67,17 @@ const handleAddUser = () => {
 
 const editUser = (row) => alert("Edit " + row.name);
 const deleteUser = (row) => {
-    removeUser(row.uuid);
+    ElMessageBox.confirm(
+        "Are you sure you want to delete this user?",
+        "Delete User",
+        {
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+            type: "warning",
+        }
+    ).then(() => {
+        removeUser(row.uuid);
+    });
 };
 const viewUser = (row) => alert("View " + row.name);
 </script>
