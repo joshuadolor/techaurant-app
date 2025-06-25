@@ -17,10 +17,13 @@
                             class="restaurant-logo"
                         />
                     </div>
-                    <div>
+                    <div class="flex flex-col gap-2">
                         <PageTitle>{{ item.name }}</PageTitle>
-                        <p class="restaurant-description">
+                        <p class="">
                             {{ item?.tagline || "No tagline set" }}
+                        </p>
+                        <p class="text-gray-500 text-sm italic">
+                            created at {{ item.createdAt }}
                         </p>
                     </div>
                 </div>
@@ -45,6 +48,12 @@
                                 >
                                     {{ item.isActive ? "Active" : "Inactive" }}
                                 </el-tag>
+                            </div>
+                            <div class="info-item full-width">
+                                <label class="info-label">Tagline</label>
+                                <p class="info-value">
+                                    {{ item.tagline || "No tagline set" }}
+                                </p>
                             </div>
                             <div class="info-item full-width">
                                 <label class="info-label">Description</label>
