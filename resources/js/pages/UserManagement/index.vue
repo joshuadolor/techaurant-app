@@ -17,7 +17,10 @@
             >
                 <template #actions="scope">
                     <el-button @click="editUser(scope.row)">Edit</el-button>
-                    <el-button type="danger" @click="deleteUser(scope.row)"
+                    <el-button
+                        data-testemail="{{ scope.row.email }}"
+                        type="danger"
+                        @click="deleteUser(scope.row)"
                         >Delete</el-button
                     >
                 </template>
@@ -39,6 +42,7 @@ const {
     error,
     query,
     fetchAll,
+    remove: removeUser,
 } = useResourceCrudTable("users");
 
 const columns = ref([
@@ -61,6 +65,8 @@ const handleAddUser = () => {
 };
 
 const editUser = (row) => alert("Edit " + row.name);
-const deleteUser = (row) => alert("Delete " + row.name);
+const deleteUser = (row) => {
+    removeUser(row.uuid);
+};
 const viewUser = (row) => alert("View " + row.name);
 </script>
