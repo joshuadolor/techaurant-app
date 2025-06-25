@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\SocialAuthController;
+use App\Resources\Restaurant\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('account')->group(function () {
@@ -32,4 +33,9 @@ Route::prefix('auth')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::get('logout', [AuthController::class, 'logout']);
     });
+
+    Route::prefix('common')->group(function () {
+        Route::get('/countries', [CountryController::class, 'index']);
+    });
+
 });

@@ -11,6 +11,10 @@ class SuperAdminSeeder extends Seeder
 {
     public function run(): void
     {
+        if(User::where('email', env('SUPER_ADMIN_EMAIL'))->exists()) {
+            return;
+        }
+
         User::factory()->create([
             'email' => env('SUPER_ADMIN_EMAIL'),
             'password' => Hash::make(env('SUPER_ADMIN_PASSWORD')),
