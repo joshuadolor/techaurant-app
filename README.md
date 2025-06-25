@@ -95,6 +95,8 @@ app/Models/User.php - this should be defined here
 
 [ ] - Restaurant Creation Wizard/Form
 [ ] - API Restaurant Data
+[ ] - fix object as formdata - insert to contact
+[ ] - Restaurant Page (populate and update)
 [ ] - Public Website MVP
 [ ] - Menu API
 .
