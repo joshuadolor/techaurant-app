@@ -1,22 +1,25 @@
+import { get, set } from "./Obj";
 const storage = {};
 export default class Cache {
     static get(key) {
-        return storage[key];
+        return get(storage, key);
     }
 
     static set(key, value) {
-        storage[key] = value;
+        set(storage, key, value);
     }
 
     static remove(key) {
-        delete storage[key];
+        set(storage, key, undefined);
     }
 
     static clear() {
-        storage = {};
+        Object.keys(storage).forEach((key) => {
+            set(storage, key, undefined);
+        });
     }
 
     static has(key) {
-        return storage?.hasOwnProperty(key);
+        return get(storage, key) !== undefined;
     }
 }
