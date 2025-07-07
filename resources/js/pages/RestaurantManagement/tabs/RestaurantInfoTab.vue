@@ -1,23 +1,23 @@
 <template>
-    <div class="bg-white p-4 md:p-6 lg:p-8">
-        <div class="flex items-center gap-2 mb-6">
-            <span class="text-orange-500 text-xl"
-                ><i class="el-icon el-icon-document"></i
-            ></span>
-            <h3
-                class="text-base md:text-lg lg:text-xl font-semibold text-orange-400"
-            >
-                {{
-                    mode === "edit"
-                        ? "Edit Restaurant Information"
-                        : "Restaurant Information"
-                }}
-            </h3>
+    <div class="bg-white">
+        <div class="flex items-center gap-2 mb-6 justify-between">
+            <div class="flex items-center gap-2">
+                <el-icon class="text-orange-400"><House /></el-icon>
+                <h3
+                    class="text-base md:text-lg lg:text-xl font-semibold text-orange-400"
+                >
+                    {{
+                        mode === "edit"
+                            ? "Edit Restaurant Information"
+                            : "Restaurant Information"
+                    }}
+                </h3>
+            </div>
 
             <el-button
                 :type="mode === 'edit' ? 'default' : 'primary'"
                 @click="toggleMode"
-                class="flex items-center gap-2 ml-auto text-white"
+                class="flex items-center gap-2 text-white"
             >
                 <Edit v-if="mode === 'edit'" />
                 <Close v-if="mode === 'view'" />
@@ -101,7 +101,7 @@
 
 <script setup>
 import { ref, reactive, watch } from "vue";
-import { Close, Edit } from "@element-plus/icons-vue";
+import { Close, Edit, House } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import useResourceMethod from "@/composables/useResourceMethod";
 import RestaurantInfoForm from "../forms/RestaurantInfoForm.vue";

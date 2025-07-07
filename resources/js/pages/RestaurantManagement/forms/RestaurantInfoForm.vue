@@ -4,7 +4,7 @@
         :model="form"
         label-position="top"
         @submit.prevent="handleSubmit"
-        class="space-y-6 bg-white p-4 md:p-6 lg:p-8"
+        class="space-y-6"
     >
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             <el-form-item
