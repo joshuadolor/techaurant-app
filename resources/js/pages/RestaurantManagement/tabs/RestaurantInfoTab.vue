@@ -18,10 +18,10 @@
                 :type="mode === 'edit' ? 'default' : 'primary'"
                 @click="toggleMode"
                 class="flex items-center gap-2 text-white"
+                v-if="mode === 'view'"
             >
                 <Edit v-if="mode === 'edit'" />
-                <Close v-if="mode === 'view'" />
-                {{ mode === "edit" ? "Cancel" : "Edit Info" }}
+                Edit Info
             </el-button>
         </div>
 
@@ -129,7 +129,7 @@ watch(
     () => mode.value,
     (val) => {
         if (val === "edit" && props.restaurant) {
-            Object.assign(editForm, props.restaurant);
+            editForm.value = props.restaurant;
         }
     },
     { immediate: true }

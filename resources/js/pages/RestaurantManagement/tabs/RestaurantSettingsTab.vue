@@ -17,10 +17,10 @@
                 :type="mode === 'edit' ? 'default' : 'primary'"
                 @click="toggleMode"
                 class="flex items-center gap-2 text-white"
+                v-if="mode === 'view'"
             >
                 <Edit v-if="mode === 'edit'" />
-                <Close v-if="mode === 'view'" />
-                {{ mode === "edit" ? "Cancel" : "Edit Settings" }}
+                Edit Settings
             </el-button>
         </div>
 

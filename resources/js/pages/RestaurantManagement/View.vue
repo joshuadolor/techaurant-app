@@ -18,7 +18,9 @@
                         />
                     </div>
                     <div class="flex flex-col gap-2">
-                        <PageTitle>{{ item.name }}</PageTitle>
+                        <PageTitle class="text-orange-400 text-3xl">
+                            {{ item.name }}
+                        </PageTitle>
                         <p class="text-gray-600">
                             {{ item?.tagline || "No tagline set" }}
                         </p>

@@ -56,14 +56,14 @@
                 <el-input
                     v-model="form.description"
                     type="textarea"
-                    rows="4"
+                    :rows="4"
                     placeholder="Tell customers about your restaurant, cuisine, atmosphere, and what makes you special"
                     class="text-gray-900"
                 />
             </el-form-item>
         </div>
         <div
-            class="flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-6 border-t border-gray-200"
+            class="flex flex-col sm:flex-row justify-end mt-8 pt-6 border-t border-gray-200"
         >
             <el-button @click="$emit('cancel')" size="large">Cancel</el-button>
             <el-button
@@ -85,27 +85,32 @@
 
 <script setup>
 import { ref, watch } from "vue";
+
 const props = defineProps({
-    modelValue: { type: Object, required: false, default: () => ({}) },
+    modelValue: { type: Object, required: true },
     loading: Boolean,
 });
-const emit = defineEmits(["update:modelValue", "submit", "cancel"]);
+
+const emit = defineEmits(["update:modelValue", "submit"]);
+
 const formRef = ref(null);
 const form = ref({
-    name: "Dummy Name",
-    slug: "dummy-slug",
-    tagline: "Dummy tagline",
-    description: "Dummy description",
-    subdomain: "dummy-subdomain",
+    name: "",
+    slug: "",
+    tagline: "",
+    description: "",
+    subdomain: "",
     is_active: true,
 });
+
 watch(
     () => props.modelValue,
     (val) => {
         if (val) Object.assign(form.value, val);
     },
-    { deep: true }
+    { deep: true, immediate: true }
 );
+
 const handleSubmit = async () => {
     emit("update:modelValue", { ...form.value });
     emit("submit", { ...form.value });
