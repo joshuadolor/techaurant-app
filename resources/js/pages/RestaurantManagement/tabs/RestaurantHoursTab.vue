@@ -125,8 +125,6 @@ watch(
         if (mode === "edit" && data) {
             editForm.value = data;
         }
-
-        console.log(data);
     },
     { immediate: true, deep: true }
 );

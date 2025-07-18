@@ -134,7 +134,7 @@ watch(
         if (val) {
             for (const [day, dayData] of Object.entries(val)) {
                 form[day].timePeriods = dayData.timePeriods;
-                form[day].isOpen = !dayData.isClosed;
+                form[day].isOpen = dayData.data.isOpen;
             }
         }
     },

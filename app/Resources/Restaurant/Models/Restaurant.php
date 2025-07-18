@@ -153,13 +153,13 @@ class Restaurant extends Model
     private function createDefaultBusinessHours()
     {
         $defaultDays = [
-            'monday' => ['09:00:00', '17:00:00'],
-            'tuesday' => ['09:00:00', '17:00:00'],
-            'wednesday' => ['09:00:00', '17:00:00'],
-            'thursday' => ['09:00:00', '17:00:00'],
-            'friday' => ['09:00:00', '17:00:00'],
-            'saturday' => ['10:00:00', '16:00:00'],
-            'sunday' => ['10:00:00', '16:00:00'],
+            'Monday' => ['09:00:00', '17:00:00'],
+            'Tuesday' => ['09:00:00', '17:00:00'],
+            'Wednesday' => ['09:00:00', '17:00:00'],
+            'Thursday' => ['09:00:00', '17:00:00'],
+            'Friday' => ['09:00:00', '17:00:00'],
+            'Saturday' => ['10:00:00', '16:00:00'],
+            'Sunday' => ['10:00:00', '16:00:00'],
         ];
 
         foreach ($defaultDays as $day => $hours) {
