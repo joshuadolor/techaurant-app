@@ -20,8 +20,6 @@ class RestaurantBusinessHour extends Model
 
     protected $casts = [
         'is_closed' => 'boolean',
-        'open_time' => 'datetime',
-        'close_time' => 'datetime',
     ];
 
     public function restaurant()

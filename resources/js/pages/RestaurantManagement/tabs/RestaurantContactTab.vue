@@ -33,7 +33,7 @@
                         >Phone</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.phone || "—" }}
+                        {{ data?.phone || "—" }}
                     </p>
                 </div>
                 <div class="flex flex-col space-y-1">
@@ -42,7 +42,7 @@
                         >Email</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.email || "—" }}
+                        {{ data?.email || "—" }}
                     </p>
                 </div>
                 <div class="flex flex-col space-y-1">
@@ -51,16 +51,16 @@
                         >Address</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.address || "—" }}
+                        {{ data?.displayAddress || "—" }}
                     </p>
                 </div>
-                <div class="flex flex-col space-y-1">
+                <!-- <div class="flex flex-col space-y-1">
                     <label
                         class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
                         >City</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.city || "—" }}
+                        {{ data?.city || "—" }}
                     </p>
                 </div>
                 <div class="flex flex-col space-y-1">
@@ -69,7 +69,7 @@
                         >State</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.state || "—" }}
+                        {{ data?.state || "—" }}
                     </p>
                 </div>
                 <div class="flex flex-col space-y-1">
@@ -78,18 +78,9 @@
                         >ZIP</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.zip || "—" }}
+                        {{ data?.zip || "—" }}
                     </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Country ID</label
-                    >
-                    <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.contact?.country_id || "—" }}
-                    </p>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -111,7 +102,7 @@ import useResourceMethod from "@/composables/useResourceMethod";
 import RestaurantContactForm from "../forms/RestaurantContactForm.vue";
 
 const props = defineProps({
-    restaurant: {
+    data: {
         type: Object,
         required: true,
     },
@@ -133,21 +124,21 @@ const editForm = reactive({
 });
 
 watch(
-    () => mode.value,
-    (val) => {
-        if (val === "edit") {
+    () => ({ mode: mode.value, data: props.data }),
+    ({ mode, data }) => {
+        if (mode === "edit" && data) {
             Object.assign(editForm, {
-                phone: "123-456-7890",
-                email: "dummy@email.com",
-                address: "123 Dummy St.",
-                city: "Dummytown",
-                state: "DummyState",
-                zip: "12345",
-                country_id: "99",
+                phone: data.phone || "",
+                email: data.email || "",
+                address: data.rawAddress || "",
+                city: data.city || "",
+                state: data.state || "",
+                zip: data.zip || "",
+                countryId: data.countryId || "",
             });
         }
     },
-    { immediate: true }
+    { immediate: true, deep: true }
 );
 
 const toggleMode = () => {
@@ -156,25 +147,5 @@ const toggleMode = () => {
 
 const cancelEdit = () => {
     mode.value = "view";
-};
-
-const { execute: updateRestaurant } = useResourceMethod("restaurants", {
-    method: "update",
-});
-
-const handleFormSubmit = async (formData) => {
-    try {
-        isSubmitting.value = true;
-        await updateRestaurant(props.restaurant.id, {
-            contact: { ...formData },
-        });
-        ElMessage.success("Contact updated successfully");
-        mode.value = "view";
-        emit("updated");
-    } catch (error) {
-        ElMessage.error("Failed to update contact");
-    } finally {
-        isSubmitting.value = false;
-    }
 };
 </script>

@@ -5,22 +5,15 @@ const defaultOptions = {
     position: 'top-right'
 }
 
-export const notify = {
-    success(options) {
-        showNotification('success', options)
-    },
-    error(options) {
-        showNotification('error', options)
-    },
-    info(options) {
-        showNotification('info', options)
-    },
-    warning(options) {
-        showNotification('warning', options)
-    }
-}
+let currentNotification = null;
 
-function showNotification(type, options) {
+function showNotification(type, options, replace = true) {
+    // Close existing notification of the same type if replace is true
+    if (replace && currentNotification) {
+        currentNotification.close()
+        currentNotification = null
+    }
+
     const config = {
         ...defaultOptions,
         type
@@ -36,7 +29,51 @@ function showNotification(type, options) {
         config.position = options.position || defaultOptions.position
     }
 
-    ElNotification(config)
+    // Create new notification and store the instance
+    const notificationInstance = ElNotification(config)
+    currentNotification = notificationInstance
+
+    // Clear the reference when notification auto-closes
+    if (config.duration > 0) {
+        setTimeout(() => {
+            if (currentNotification === notificationInstance) {
+                currentNotification = null
+            }
+        }, config.duration)
+    }
+
+    return notificationInstance
 }
 
-export default notify 
+export const notify = {
+    success(options, replace = true) {
+        return showNotification('success', options, replace)
+    },
+    error(options, replace = true) {
+        return showNotification('error', options, replace)
+    },
+    info(options, replace = true) {
+        return showNotification('info', options, replace)
+    },
+    warning(options, replace = true) {
+        return showNotification('warning', options, replace)
+    },
+
+    // Clear all notifications
+    clearAll() {
+        Object.keys(currentNotification).forEach(type => {
+            if (currentNotification) {
+                currentNotification.close()
+                currentNotification = null
+            }
+        })
+    },
+
+    // Clear specific type
+    clear() {
+        if (currentNotification) {
+            currentNotification.close()
+            currentNotification = null
+        }
+    }
+} 

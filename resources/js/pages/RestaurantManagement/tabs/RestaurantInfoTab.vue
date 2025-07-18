@@ -81,7 +81,9 @@
                         class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
                         >Description</label
                     >
-                    <p class="text-gray-900 text-base md:text-lg">
+                    <p
+                        class="text-gray-900 text-base md:text-lg whitespace-pre-line"
+                    >
                         {{ restaurant.description || "—" }}
                     </p>
                 </div>
@@ -125,32 +127,20 @@ const editForm = reactive({
 });
 
 watch(
-    () => mode.value,
-    (val) => {
-        if (val === "edit" && props.restaurant) {
-            // Fix: Use Object.assign to properly populate the reactive form
+    () => ({ mode: mode.value, restaurant: props.restaurant }),
+    ({ mode, restaurant }) => {
+        if (mode === "edit" && restaurant) {
             Object.assign(editForm, {
-                name: props.restaurant.name || "",
-                slug: props.restaurant.slug || "",
-                tagline: props.restaurant.tagline || "",
-                description: props.restaurant.description || "",
-                subdomain: props.restaurant.subdomain || "",
-                is_active: props.restaurant.isActive ?? true, // Note: converting isActive to is_active
+                name: restaurant.name || "",
+                slug: restaurant.slug || "",
+                tagline: restaurant.tagline || "",
+                description: restaurant.description || "",
+                subdomain: restaurant.subdomain || "",
+                is_active: restaurant.isActive ?? true,
             });
         }
     },
-    { immediate: true }
-);
-
-// Also watch for changes in the restaurant prop to update the form
-watch(
-    () => props.restaurant,
-    (newRestaurant) => {
-        if (mode.value === "edit" && newRestaurant) {
-            Object.assign(editForm, newRestaurant);
-        }
-    },
-    { deep: true }
+    { immediate: true, deep: true }
 );
 
 const toggleMode = () => {
@@ -159,15 +149,5 @@ const toggleMode = () => {
 
 const cancelEdit = () => {
     mode.value = "view";
-};
-
-const handleFormSubmit = async (formData) => {
-    isSubmitting.value = true;
-    setTimeout(() => {
-        isSubmitting.value = false;
-        mode.value = "view";
-        ElMessage.success("Info updated (dummy)");
-        emit("updated");
-    }, 1000);
 };
 </script>

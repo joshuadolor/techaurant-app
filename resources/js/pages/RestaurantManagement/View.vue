@@ -49,7 +49,7 @@
                     <div class="tab-content">
                         <RestaurantContactTab
                             v-if="activeTab === 'contact'"
-                            :restaurant="item"
+                            :data="item?.contact"
                             @edit="editTab('contact')"
                         />
                     </div>
@@ -60,7 +60,7 @@
                     <div class="tab-content">
                         <RestaurantHoursTab
                             v-if="activeTab === 'hours'"
-                            :restaurant="item"
+                            :data="item?.businessHoursByDay"
                             @edit="editTab('hours')"
                         />
                     </div>
@@ -86,6 +86,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, provide } from "vue";
+import { notify } from "@/utils/notification";
 
 import Restaurant from "@/models/Restaurant";
 import useResourceMethod from "@/composables/useResourceMethod";
@@ -112,7 +113,15 @@ const editTab = (tabName) => {
 };
 
 provide("refreshData", async () => {
+    notify.info({
+        message: "Refreshing restaurant data...",
+        position: "bottom-right",
+    });
     await execute(id);
+    notify.success(
+        { message: "Restaurant updated!", position: "bottom-right" },
+        true
+    );
 });
 
 onMounted(async () => {

@@ -42,7 +42,7 @@
                                 :to="item.route"
                                 class="flex mx-3 my-2 items-center gap-3 px-6 py-3 rounded-md hover:bg-gray-200 hover:text-gray-900 transition"
                                 :class="{
-                                    'bg-black text-white font-semibold':
+                                    'bg-orange-400 text-white font-semibold':
                                         isActive(item.route),
                                     'text-gray-700': !isActive(item.route),
                                 }"
@@ -73,7 +73,7 @@
                                             :to="subItem.route"
                                             class="flex mx-3 my-1 items-center gap-3 px-6 py-2 rounded-md hover:bg-gray-200 hover:text-gray-900 transition"
                                             :class="{
-                                                'bg-black text-white font-semibold':
+                                                'bg-orange-400 text-white font-semibold':
                                                     isActive(subItem.route),
                                                 'text-gray-700': !isActive(
                                                     subItem.route

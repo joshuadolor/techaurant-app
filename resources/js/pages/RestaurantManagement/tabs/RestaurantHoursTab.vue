@@ -25,25 +25,19 @@
         </div>
         <!-- View Mode -->
         <div v-if="mode === 'view'">
-            <div
-                v-if="
-                    restaurant.business_hours &&
-                    restaurant.business_hours.length > 0
-                "
-                class="space-y-4"
-            >
+            <div v-if="data && Object.keys(data).length > 0" class="space-y-4">
                 <div
-                    v-for="hour in restaurant.business_hours"
-                    :key="hour.day_of_week"
+                    v-for="[day, dayData] in Object.entries(data)"
+                    :key="day"
                     class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-gray-200 rounded-lg gap-y-2"
                 >
                     <div class="flex items-center gap-3">
                         <span
                             class="font-medium text-gray-700 text-base md:text-lg"
-                            >{{ hour.day_of_week }}</span
+                            >{{ day }}</span
                         >
                         <el-tag
-                            v-if="!hour.is_closed"
+                            v-if="dayData.data.isOpen"
                             style="
                                 background-color: #ff7a1a;
                                 color: #fff;
@@ -65,11 +59,22 @@
                         >
                     </div>
                     <div
-                        v-if="!hour.is_closed"
+                        v-if="dayData.data.isOpen"
                         class="text-gray-900 text-base md:text-lg"
                     >
-                        <span class="text-gray-500 mr-2">Hours:</span
-                        >{{ hour.open_time }} - {{ hour.close_time }}
+                        <span class="text-gray-500 mr-2">Hours:</span>
+                        <div class="space-y-1">
+                            <div
+                                v-for="(period, index) in dayData.timePeriods"
+                                :key="index"
+                                class="flex items-center gap-2"
+                            >
+                                <span
+                                    >{{ period.openTime12h }} -
+                                    {{ period.closeTime12h }}</span
+                                >
+                            </div>
+                        </div>
                     </div>
                     <div v-else class="text-gray-400 text-base md:text-lg">
                         <span class="text-gray-500 mr-2">Status:</span>Closed
@@ -77,7 +82,9 @@
                 </div>
             </div>
             <div v-else class="text-center text-gray-400 py-8">
-                <el-icon class="text-4xl mb-4 text-gray-300"><Clock /></el-icon>
+                <el-icon size="large" class="mb-4 text-gray-300"
+                    ><Clock
+                /></el-icon>
                 <p>No business hours configured</p>
             </div>
         </div>
@@ -99,7 +106,7 @@ import useResourceMethod from "@/composables/useResourceMethod";
 import RestaurantBusinessHoursForm from "../forms/RestaurantBusinessHoursForm.vue";
 
 const props = defineProps({
-    restaurant: {
+    data: {
         type: Object,
         required: true,
     },
@@ -112,59 +119,16 @@ const isSubmitting = ref(false);
 
 const editForm = ref([]);
 
-const dummyHours = [
-    {
-        day_of_week: "Monday",
-        open_time: "09:00:00",
-        close_time: "17:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Tuesday",
-        open_time: "09:00:00",
-        close_time: "17:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Wednesday",
-        open_time: "09:00:00",
-        close_time: "17:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Thursday",
-        open_time: "09:00:00",
-        close_time: "17:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Friday",
-        open_time: "09:00:00",
-        close_time: "17:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Saturday",
-        open_time: "10:00:00",
-        close_time: "16:00:00",
-        is_closed: false,
-    },
-    {
-        day_of_week: "Sunday",
-        open_time: null,
-        close_time: null,
-        is_closed: true,
-    },
-];
-
 watch(
-    () => mode.value,
-    (val) => {
-        if (val === "edit") {
-            editForm.value = JSON.parse(JSON.stringify(dummyHours));
+    () => ({ mode: mode.value, data: props.data }),
+    ({ mode, data }) => {
+        if (mode === "edit" && data) {
+            editForm.value = data;
         }
+
+        console.log(data);
     },
-    { immediate: true }
+    { immediate: true, deep: true }
 );
 
 const toggleMode = () => {
@@ -173,19 +137,5 @@ const toggleMode = () => {
 
 const cancelEdit = () => {
     mode.value = "view";
-};
-
-const { execute: updateRestaurant } = useResourceMethod("restaurants", {
-    method: "update",
-});
-
-const handleFormSubmit = async (formData) => {
-    isSubmitting.value = true;
-    setTimeout(() => {
-        isSubmitting.value = false;
-        mode.value = "view";
-        ElMessage.success("Business hours updated (dummy)");
-        emit("updated");
-    }, 1000);
 };
 </script>

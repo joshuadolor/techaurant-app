@@ -28,7 +28,6 @@ class Restaurant extends Model
         'owner_id',
         'subdomain',
         'is_active',
-    
     ];
 
     /**
@@ -65,56 +64,124 @@ class Restaurant extends Model
 
         // Create related records after restaurant is created
         static::created(function ($restaurant) {
-            // Create contact if provided
-            $contact = array_merge([
-                'phone' => '',
-                'email' => '',
-                'address' => '',
-            ], request()->contact ?? []);
-
-            $restaurant->contact()->create($contact);
-
-            $configData = [
-                'theme' => 'default',
-                'currency' => 'USD',
-                'primary_color' => '#D35400',
-                'secondary_color' => '#2C3E50',
-                'timezone' => 'UTC',
-                'language' => 'en',
-            ];
-
-            if(request()->has('logo_url')){
-                $configData['logo_url'] = request()->logo_url;
-            }
-
-            $restaurant->config()->create($configData);
-
-            $businessHours = $restaurant->business_hours;
-            if (isset($businessHours) && is_array($businessHours)) {
-                foreach ($businessHours as $businessHour) {
-                    $restaurant->businessHours()->create($businessHour);
-                }
-            } else {
-                $defaultDays = [
-                    'monday' => ['09:00', '17:00'],
-                    'tuesday' => ['09:00', '17:00'],
-                    'wednesday' => ['09:00', '17:00'],
-                    'thursday' => ['09:00', '17:00'],
-                    'friday' => ['09:00', '17:00'],
-                    'saturday' => ['10:00', '16:00'],
-                    'sunday' => ['10:00', '16:00'],
-                ];
-
-                foreach ($defaultDays as $day => $hours) {
-                    $restaurant->businessHours()->create([
-                        'day_of_week' => $day,
-                        'open_time' => $hours[0],
-                        'close_time' => $hours[1],
-                        'is_open' => true,
-                    ]);
-                }
-            }
+            $restaurant->createRelatedRecords();
         });
+
+    }
+
+    /**
+     * Create related records (contact, config, business hours)
+     */
+    public function createRelatedRecords()
+    {
+        // Create contact if provided
+        $contact = array_merge([
+            'phone' => '',
+            'email' => '',
+            'address' => '',
+        ], request()->contact ?? []);
+
+        $this->contact()->create($contact);
+
+        $configData = [
+            'theme' => 'default',
+            'currency' => 'USD',
+            'primary_color' => '#D35400',
+            'secondary_color' => '#2C3E50',
+            'timezone' => 'UTC',
+            'language' => 'en',
+        ];
+
+        if(request()->has('logo_url')){
+            $configData['logo_url'] = request()->logo_url;
+        }
+
+        $this->config()->create($configData);
+
+        $businessHours = request()->business_hours;
+        if (isset($businessHours) && is_array($businessHours)) {
+            foreach ($businessHours as $businessHour) {
+                $this->businessHours()->create($businessHour);
+            }
+        } else {
+            $this->createDefaultBusinessHours();
+        }
+    }
+
+    /**
+     * Update related records (contact, config, business hours)
+     */
+    public function updateRelatedRecords()
+    {
+        // Update contact information
+        if (request()->has('contact')) {
+            $contactData = request()->contact;
+            if ($this->contact) {
+                $this->contact->update($contactData);
+            } else {
+                $this->contact()->create($contactData);
+            }
+        }
+
+        // Update config information
+        if (request()->has('config')) {
+            $configData = request()->config;
+            if ($this->config) {
+                $this->config->update($configData);
+            } else {
+                $this->config()->create($configData);
+            }
+        }
+
+        // Update business hours
+        if (request()->has('business_hours')) {
+            $businessHoursData = request()->business_hours;
+            
+            // Delete existing business hours
+            $this->businessHours()->delete();
+            
+            // Create new business hours
+            foreach ($businessHoursData as $businessHour) {
+                $this->businessHours()->create($businessHour);
+            }
+        }
+    }
+
+    /**
+     * Create default business hours
+     */
+    private function createDefaultBusinessHours()
+    {
+        $defaultDays = [
+            'monday' => ['09:00:00', '17:00:00'],
+            'tuesday' => ['09:00:00', '17:00:00'],
+            'wednesday' => ['09:00:00', '17:00:00'],
+            'thursday' => ['09:00:00', '17:00:00'],
+            'friday' => ['09:00:00', '17:00:00'],
+            'saturday' => ['10:00:00', '16:00:00'],
+            'sunday' => ['10:00:00', '16:00:00'],
+        ];
+
+        foreach ($defaultDays as $day => $hours) {
+            $this->businessHours()->create([
+                'day_of_week' => $day,
+                'open_time' => $hours[0],
+                'close_time' => $hours[1],
+                'is_open' => true,
+            ]);
+        }
+    }
+
+    public function save(array $options = [])
+    {
+        $result = parent::save($options);
+        
+        // Always update related records after any save
+        if ($result) {
+            $this->updateRelatedRecords();
+        }
+        
+        return $result;
     }
 
     /**
