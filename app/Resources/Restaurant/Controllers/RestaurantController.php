@@ -48,9 +48,15 @@ class RestaurantController extends ResourceController
     public function getValidationRules(string $type, Request $request): array
     {
         $rules = $this->validationRules[$type] ?? [];
-        $rules = array_merge($rules, [
-            'name' => 'required|string|max:255|unique:restaurants,name,null,id,owner_id,' . $request->owner_id,
-        ]);
+        if ($type === 'update') {
+            $rules = array_merge($rules, [
+                'name' => 'required|string|max:255|unique:restaurants,name,' . $request->route('restaurant') . ',uuid,owner_id,' . $request->owner_id,
+            ]);
+        } else {
+            $rules = array_merge($rules, [
+                'name' => 'required|string|max:255|unique:restaurants,name,NULL,id,owner_id,' . $request->owner_id,
+            ]); 
+        }
         return $rules;
     }
 }

@@ -11,17 +11,11 @@
                 label="Restaurant Name"
                 prop="name"
                 class="font-semibold"
+                :error="error?.getErrors()?.name"
             >
                 <el-input
                     v-model="form.name"
                     placeholder="Restaurant Name"
-                    class="text-gray-900"
-                />
-            </el-form-item>
-            <el-form-item label="Slug" prop="slug">
-                <el-input
-                    v-model="form.slug"
-                    placeholder="restaurant-slug"
                     class="text-gray-900"
                 />
             </el-form-item>
@@ -37,15 +31,14 @@
                     v-model="form.subdomain"
                     placeholder="subdomain"
                     class="text-gray-900"
+                    readonly
                 />
             </el-form-item>
-            <el-form-item label="Active" prop="is_active">
-                <el-switch
+            <el-form-item label="Status" prop="is_active">
+                <Switch
                     v-model="form.is_active"
                     active-text="Active"
                     inactive-text="Inactive"
-                    active-color="#FF7A1A"
-                    inactive-color="#E5E7EB"
                 />
             </el-form-item>
             <el-form-item
@@ -70,21 +63,23 @@
                 type="primary"
                 size="large"
                 :loading="loading"
-                style="
-                    background-color: #ff7a1a;
-                    border-color: #ff7a1a;
-                    color: #fff;
-                "
                 @click="handleSubmit"
             >
-                {{ loading ? "Saving..." : "Save Changes" }}
+                {{ loading ? "Updating..." : "Update" }}
             </el-button>
         </div>
     </el-form>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, inject } from "vue";
+import Switch from "@/widgets/Switch";
+import useResourceMethod from "@/composables/useResourceMethod";
+import { useRoute } from "vue-router";
+
+const { loading, error, execute } = useResourceMethod("restaurants", {
+    method: "update",
+});
 
 const props = defineProps({
     modelValue: { type: Object, required: true },
@@ -111,8 +106,14 @@ watch(
     { deep: true, immediate: true }
 );
 
+const { id } = useRoute().params;
+const refreshData = inject("refreshData");
+
 const handleSubmit = async () => {
-    emit("update:modelValue", { ...form.value });
-    emit("submit", { ...form.value });
+    const response = await execute(id, form.value);
+    if (response) {
+        refreshData();
+        emit("cancel");
+    }
 };
 </script>

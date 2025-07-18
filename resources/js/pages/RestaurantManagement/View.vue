@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div v-if="loading || !item">
+        <div v-if="(loading && !item) || !item">
             <el-skeleton :rows="10" animated />
         </div>
         <div v-else-if="error">
@@ -85,7 +85,7 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, provide } from "vue";
 
 import Restaurant from "@/models/Restaurant";
 import useResourceMethod from "@/composables/useResourceMethod";
@@ -110,6 +110,10 @@ const { item, loading, error, execute } = useResourceMethod("restaurants", {
 const editTab = (tabName) => {
     router.push(`/restaurants/${id}/edit?tab=${tabName}`);
 };
+
+provide("refreshData", async () => {
+    await execute(id);
+});
 
 onMounted(async () => {
     await execute(id);

@@ -17,6 +17,7 @@ export default function useResourceMethod(resourceName, { method, model = null }
             if (model) {
                 item.value = new model(response.data);
             }
+
             return item.value;
         } catch (err) {
             error.value = err;

@@ -15,6 +15,7 @@ class Restaurant extends BaseModel {
         this._is_active = !!data.is_active;
         this._is_verified = !!data.is_verified;
         this._config = new RestaurantConfig(data.config);
+        this._description = data.description;
         this._created_at = data.created_at;
     }
 
@@ -60,6 +61,10 @@ class Restaurant extends BaseModel {
 
     get createdAt() {
         return formatDate(this._created_at);
+    }
+
+    get description() {
+        return this._description;
     }
 }
 

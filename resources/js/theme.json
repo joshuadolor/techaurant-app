@@ -1,0 +1,15 @@
+{
+    "--el-color-primary": "#ff8904",
+    "--el-button-hover-bg-color": "#e67a03",
+    "--el-button-active-bg-color": "#e67a03",
+    "--el-color-primary-light-1": "#ff9419",
+    "--el-color-primary-light-2": "#ff9f2e",
+    "--el-color-primary-light-3": "#ffaa43",
+    "--el-color-primary-light-4": "#ffb558",
+    "--el-color-primary-light-5": "#ffc06d",
+    "--el-color-primary-light-6": "#ffcb82",
+    "--el-color-primary-light-7": "#ffd697",
+    "--el-color-primary-light-8": "#ffe1ac",
+    "--el-color-primary-light-9": "#ffecc1",
+    "--el-color-primary-dark-2": "#cc6d03"
+}

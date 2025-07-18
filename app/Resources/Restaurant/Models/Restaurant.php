@@ -23,7 +23,6 @@ class Restaurant extends Model
      */
     protected $fillable = [
         'name',
-        'slug',
         'tagline', 
         'description',
         'owner_id',
@@ -56,6 +55,12 @@ class Restaurant extends Model
 
         static::creating(function ($restaurant) {
             $restaurant->slug = Str::slug($restaurant->name) . '-' . $restaurant->owner_id * rand(1, 100);
+        });
+
+        static::updating(function ($restaurant) {
+            if ($restaurant->isDirty('name')) { 
+                $restaurant->slug = Str::slug($restaurant->name) . '-' . $restaurant->owner_id * rand(1, 100);
+            }
         });
 
         // Create related records after restaurant is created

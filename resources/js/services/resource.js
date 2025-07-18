@@ -18,7 +18,12 @@ class ResourceService {
     }
 
     async update(id, data, config = {}) {
-        return ApiService.put(`${this.API_URL}/${id}`, data, config);
+        const cleanData = Object.fromEntries(
+            Object.entries(data).filter(
+                ([_, value]) => value !== "" && value !== null
+            )
+        );
+        return ApiService.put(`${this.API_URL}/${id}`, cleanData, config);
     }
 
     async delete(id) {

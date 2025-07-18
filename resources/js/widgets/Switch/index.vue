@@ -1,9 +1,10 @@
 <template>
     <el-switch
         v-bind="$attrs"
-        :active-color="activeColor"
-        :inactive-color="inactiveColor"
-        v-on="$listeners"
+        :style="{
+            '--el-switch-on-color': activeColor,
+            '--el-switch-off-color': inactiveColor,
+        }"
     >
         <template v-for="(_, slot) in $slots" #[slot]="scope">
             <slot :name="slot" v-bind="scope" />
@@ -15,7 +16,7 @@
 const props = defineProps({
     activeColor: {
         type: String,
-        default: "#FF7A1A",
+        default: "#ff8904",
     },
     inactiveColor: {
         type: String,

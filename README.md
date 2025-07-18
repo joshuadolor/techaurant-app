@@ -18,6 +18,10 @@ A modern web application that enables restaurant owners to manage their menus an
 -   Docker (Containerization)
 -   Node.js & NPM (Package Management)
 
+## Color Scheme
+
+-   Primary: orange-400/#ff8904
+
 ## Prerequisites
 
 -   Docker and Docker Compose

@@ -93,7 +93,6 @@
             v-else
             v-model="editForm"
             :loading="isSubmitting"
-            @submit="handleFormSubmit"
             @cancel="cancelEdit"
         />
     </div>
@@ -129,10 +128,29 @@ watch(
     () => mode.value,
     (val) => {
         if (val === "edit" && props.restaurant) {
-            editForm.value = props.restaurant;
+            // Fix: Use Object.assign to properly populate the reactive form
+            Object.assign(editForm, {
+                name: props.restaurant.name || "",
+                slug: props.restaurant.slug || "",
+                tagline: props.restaurant.tagline || "",
+                description: props.restaurant.description || "",
+                subdomain: props.restaurant.subdomain || "",
+                is_active: props.restaurant.isActive ?? true, // Note: converting isActive to is_active
+            });
         }
     },
     { immediate: true }
+);
+
+// Also watch for changes in the restaurant prop to update the form
+watch(
+    () => props.restaurant,
+    (newRestaurant) => {
+        if (mode.value === "edit" && newRestaurant) {
+            Object.assign(editForm, newRestaurant);
+        }
+    },
+    { deep: true }
 );
 
 const toggleMode = () => {
