@@ -49,47 +49,75 @@
                 type="primary"
                 size="large"
                 :loading="loading"
-                style="
-                    background-color: #ff7a1a;
-                    border-color: #ff7a1a;
-                    color: #fff;
-                "
                 @click="handleSubmit"
             >
-                {{ loading ? "Saving..." : "Save Changes" }}
+                {{ loading ? "Updating..." : "Update" }}
             </el-button>
         </div>
     </el-form>
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, inject } from "vue";
+import useResourceMethod from "@/composables/useResourceMethod";
+import { useRoute } from "vue-router";
+
+const { loading, error, execute } = useResourceMethod("restaurants", {
+    method: "update",
+});
+
 const props = defineProps({
     modelValue: { type: Array, required: true },
     loading: Boolean,
 });
+
 const emit = defineEmits(["update:modelValue", "submit", "cancel"]);
+
 const formRef = ref(null);
 
-// Normalize input to always have open_time/close_time as string or null
+// Normalize input to always have open_time/close_time as valid time strings in HH:mm:ss format or undefined
+const normalizeTime = (time) => {
+    if (!time || typeof time !== "string") return undefined;
+
+    // If already in HH:mm:ss format, return as is
+    if (time.match(/^\d{2}:\d{2}:\d{2}$/)) {
+        return time;
+    }
+
+    // If in HH:mm format, convert to HH:mm:ss
+    if (time.match(/^\d{2}:\d{2}$/)) {
+        return `${time}:00`;
+    }
+
+    return undefined;
+};
+
 const normalize = (arr) =>
     arr.map((d) => ({
         ...d,
-        open_time: typeof d.open_time === "string" ? d.open_time : null,
-        close_time: typeof d.close_time === "string" ? d.close_time : null,
+        open_time: normalizeTime(d.open_time),
+        close_time: normalizeTime(d.close_time),
         is_closed: !!d.is_closed,
     }));
 
 const form = ref(normalize(props.modelValue));
+
 watch(
     () => props.modelValue,
     (val) => {
-        form.value = normalize(val);
+        if (val) form.value = normalize(val);
     },
-    { deep: true }
+    { deep: true, immediate: true }
 );
+
+const { id } = useRoute().params;
+const refreshData = inject("refreshData");
+
 const handleSubmit = async () => {
-    emit("update:modelValue", [...form.value]);
-    emit("submit", [...form.value]);
+    const response = await execute(id, { business_hours: form.value });
+    if (response) {
+        refreshData();
+        emit("cancel");
+    }
 };
 </script>

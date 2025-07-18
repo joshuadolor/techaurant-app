@@ -98,7 +98,6 @@
             v-else
             v-model="editForm"
             :loading="isSubmitting"
-            @submit="handleFormSubmit"
             @cancel="cancelEdit"
         />
     </div>

@@ -86,7 +86,6 @@
             v-else
             v-model="editForm"
             :loading="isSubmitting"
-            @submit="handleFormSubmit"
             @cancel="cancelEdit"
         />
     </div>
@@ -116,41 +115,46 @@ const editForm = ref([]);
 const dummyHours = [
     {
         day_of_week: "Monday",
-        open_time: "09:00",
-        close_time: "17:00",
+        open_time: "09:00:00",
+        close_time: "17:00:00",
         is_closed: false,
     },
     {
         day_of_week: "Tuesday",
-        open_time: "09:00",
-        close_time: "17:00",
+        open_time: "09:00:00",
+        close_time: "17:00:00",
         is_closed: false,
     },
     {
         day_of_week: "Wednesday",
-        open_time: "09:00",
-        close_time: "17:00",
+        open_time: "09:00:00",
+        close_time: "17:00:00",
         is_closed: false,
     },
     {
         day_of_week: "Thursday",
-        open_time: "09:00",
-        close_time: "17:00",
+        open_time: "09:00:00",
+        close_time: "17:00:00",
         is_closed: false,
     },
     {
         day_of_week: "Friday",
-        open_time: "09:00",
-        close_time: "17:00",
+        open_time: "09:00:00",
+        close_time: "17:00:00",
         is_closed: false,
     },
     {
         day_of_week: "Saturday",
-        open_time: "10:00",
-        close_time: "16:00",
+        open_time: "10:00:00",
+        close_time: "16:00:00",
         is_closed: false,
     },
-    { day_of_week: "Sunday", open_time: "", close_time: "", is_closed: true },
+    {
+        day_of_week: "Sunday",
+        open_time: null,
+        close_time: null,
+        is_closed: true,
+    },
 ];
 
 watch(
