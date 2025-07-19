@@ -41,7 +41,9 @@ export default function useResourceCrudTable(resourceName, model = null, initial
             } else {
                 items.value = response.data.data || response.data;
             }
-            total.value = response.data.meta?.total || response.data.total || 0;
+            const responseTotal =
+                response.data.meta?.total || response.data.total || 0;
+            total.value = query.perPage * response.data.meta.last_page;
         } catch (err) {
             error.value = err;
         } finally {
