@@ -71,7 +71,7 @@
                     <div class="tab-content">
                         <RestaurantSettingsTab
                             v-if="activeTab === 'settings'"
-                            :restaurant="item"
+                            :data="item?.config"
                             @edit="editTab('settings')"
                         />
                     </div>

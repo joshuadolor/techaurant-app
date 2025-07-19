@@ -129,6 +129,10 @@ class Restaurant extends BaseModel {
             .filter(day => day.isOpen && day.timePeriods.length > 0)
             .map(day => day.dayName);
     }
+
+    get config() {
+        return this._config;
+    }
 }
 
 export default Restaurant;

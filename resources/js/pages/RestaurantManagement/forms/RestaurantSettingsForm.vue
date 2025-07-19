@@ -23,6 +23,22 @@
                 </el-select>
             </el-form-item>
             <el-form-item
+                label="Currency"
+                prop="currency"
+                :error="error?.getErrors()?.currency"
+            >
+                <el-select
+                    v-model="form.currency"
+                    placeholder="Select currency"
+                    class="w-full text-gray-900"
+                >
+                    <el-option label="USD ($)" value="USD" />
+                    <el-option label="EUR (€)" value="EUR" />
+                    <el-option label="PHP (₱)" value="PHP" />
+                    <el-option label="GBP (£)" value="GBP" />
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 label="Primary Color"
                 prop="primary_color"
                 :error="error?.getErrors()?.primary_color"
@@ -36,7 +52,7 @@
             >
                 <el-color-picker v-model="form.secondary_color" />
             </el-form-item>
-            <el-form-item
+            <!-- <el-form-item
                 label="Logo URL"
                 prop="logo_url"
                 :error="error?.getErrors()?.logo_url"
@@ -57,8 +73,8 @@
                     placeholder="Paste banner URL or upload below"
                     class="text-gray-900"
                 />
-            </el-form-item>
-            <el-form-item
+            </el-form-item> -->
+            <!-- <el-form-item
                 label="Timezone"
                 prop="timezone"
                 :error="error?.getErrors()?.timezone"
@@ -72,22 +88,7 @@
                     <el-option label="EST" value="EST" />
                     <el-option label="PST" value="PST" />
                 </el-select>
-            </el-form-item>
-            <el-form-item
-                label="Currency"
-                prop="currency"
-                :error="error?.getErrors()?.currency"
-            >
-                <el-select
-                    v-model="form.currency"
-                    placeholder="Select currency"
-                    class="w-full text-gray-900"
-                >
-                    <el-option label="USD ($)" value="USD" />
-                    <el-option label="EUR (€)" value="EUR" />
-                    <el-option label="GBP (£)" value="GBP" />
-                </el-select>
-            </el-form-item>
+            </el-form-item> -->
         </div>
         <div
             class="flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-6 border-t border-gray-200"
@@ -124,35 +125,11 @@ const emit = defineEmits(["update:modelValue", "submit", "cancel"]);
 const formRef = ref(null);
 const form = ref({ ...props.modelValue });
 
-const rules = {
-    language: [
-        { required: true, message: "Language is required", trigger: "change" },
-    ],
-    primary_color: [
-        {
-            required: true,
-            message: "Primary color is required",
-            trigger: "change",
-        },
-    ],
-    secondary_color: [
-        {
-            required: true,
-            message: "Secondary color is required",
-            trigger: "change",
-        },
-    ],
-    timezone: [
-        { required: true, message: "Timezone is required", trigger: "change" },
-    ],
-    currency: [
-        { required: true, message: "Currency is required", trigger: "change" },
-    ],
-};
-
 watch(
     () => props.modelValue,
     (val) => {
+        console.log("going to form", val);
+
         if (val) Object.assign(form.value, val);
     },
     { deep: true, immediate: true }

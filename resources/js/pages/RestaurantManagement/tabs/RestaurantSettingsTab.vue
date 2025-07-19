@@ -33,52 +33,7 @@
                         >Language</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.config?.language || "—" }}
-                    </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Primary Color</label
-                    >
-                    <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.config?.primary_color || "—" }}
-                    </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Secondary Color</label
-                    >
-                    <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.config?.secondary_color || "—" }}
-                    </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Logo URL</label
-                    >
-                    <p class="text-gray-900 break-all text-base md:text-lg">
-                        {{ restaurant.config?.logo_url || "—" }}
-                    </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Banner URL</label
-                    >
-                    <p class="text-gray-900 break-all text-base md:text-lg">
-                        {{ restaurant.config?.banner_url || "—" }}
-                    </p>
-                </div>
-                <div class="flex flex-col space-y-1">
-                    <label
-                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
-                        >Timezone</label
-                    >
-                    <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.config?.timezone || "—" }}
+                        {{ data?.language || "—" }}
                     </p>
                 </div>
                 <div class="flex flex-col space-y-1">
@@ -87,9 +42,66 @@
                         >Currency</label
                     >
                     <p class="text-gray-900 text-base md:text-lg">
-                        {{ restaurant.config?.currency || "—" }}
+                        {{ data?.currency || "—" }}
                     </p>
                 </div>
+                <div class="flex flex-col space-y-1">
+                    <label
+                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
+                        >Primary Color</label
+                    >
+                    <div
+                        class="text-gray-900 text-base md:text-lg flex items-center gap-2"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-md"
+                            :style="{ backgroundColor: data?.primaryColor }"
+                        ></div>
+                        {{ data?.primaryColor || "—" }}
+                    </div>
+                </div>
+                <div class="flex flex-col space-y-1">
+                    <label
+                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
+                        >Secondary Color</label
+                    >
+                    <div
+                        class="text-gray-900 text-base md:text-lg flex items-center gap-2"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-md"
+                            :style="{ backgroundColor: data?.secondaryColor }"
+                        ></div>
+                        {{ data?.secondaryColor || "—" }}
+                    </div>
+                </div>
+                <!-- <div class="flex flex-col space-y-1">
+                    <label
+                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
+                        >Logo URL</label
+                    >
+                    <p class="text-gray-900 break-all text-base md:text-lg">
+                        {{ data?.logoUrl || "—" }}
+                    </p>
+                </div> -->
+                <!-- <div class="flex flex-col space-y-1">
+                    <label
+                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
+                        >Banner URL</label
+                    >
+                    <p class="text-gray-900 break-all text-base md:text-lg">
+                        {{ data?.banner_url || "—" }}
+                    </p>
+                </div>
+                <div class="flex flex-col space-y-1">
+                    <label
+                        class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
+                        >Timezone</label
+                    >
+                    <p class="text-gray-900 text-base md:text-lg">
+                        {{ data?.timezone || "—" }}
+                    </p>
+                </div> -->
             </div>
         </div>
 
@@ -111,7 +123,7 @@ import useResourceMethod from "@/composables/useResourceMethod";
 import RestaurantSettingsForm from "../forms/RestaurantSettingsForm.vue";
 
 const props = defineProps({
-    restaurant: {
+    data: {
         type: Object,
         required: true,
     },
@@ -122,32 +134,20 @@ const emit = defineEmits(["updated"]);
 const mode = ref("view");
 const isSubmitting = ref(false);
 
-const editForm = reactive({
-    language: "English",
-    primary_color: "#FF0000",
-    secondary_color: "#00FF00",
-    logo_url: "https://dummy.logo/url.png",
-    banner_url: "https://dummy.banner/url.png",
-    timezone: "UTC",
-    currency: "USD",
-});
+const editForm = ref({ ...props.data });
 
 watch(
-    () => mode.value,
-    (val) => {
-        if (val === "edit") {
-            Object.assign(editForm, {
-                language: "English",
-                primary_color: "#FF0000",
-                secondary_color: "#00FF00",
-                logo_url: "https://dummy.logo/url.png",
-                banner_url: "https://dummy.banner/url.png",
-                timezone: "UTC",
-                currency: "USD",
-            });
+    () => ({ mode: mode.value, data: props.data }),
+    ({ mode, data }) => {
+        if (mode === "edit") {
+            editForm.value.primary_color = data.primaryColor;
+            editForm.value.secondary_color = data.secondaryColor;
+            editForm.value.language = data.languageCode;
+            editForm.value.currency = data.currency;
+            console.log(editForm.value);
         }
     },
-    { immediate: true }
+    { immediate: true, deep: true }
 );
 
 const toggleMode = () => {
