@@ -144,7 +144,6 @@ watch(
             editForm.value.secondary_color = data.secondaryColor;
             editForm.value.language = data.languageCode;
             editForm.value.currency = data.currency;
-            console.log(editForm.value);
         }
     },
     { immediate: true, deep: true }

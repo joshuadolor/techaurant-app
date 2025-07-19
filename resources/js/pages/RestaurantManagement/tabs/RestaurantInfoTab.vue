@@ -37,7 +37,7 @@
                         {{ restaurant.name || "—" }}
                     </p>
                 </div>
-                <div class="flex flex-col space-y-1">
+                <!-- <div class="flex flex-col space-y-1">
                     <label
                         class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"
                         >Slug</label
@@ -45,7 +45,7 @@
                     <p class="text-gray-900 text-base md:text-lg">
                         {{ restaurant.slug || "—" }}
                     </p>
-                </div>
+                </div> -->
                 <div class="flex flex-col space-y-1">
                     <label
                         class="text-xs md:text-sm font-medium text-gray-700 mb-0.5"

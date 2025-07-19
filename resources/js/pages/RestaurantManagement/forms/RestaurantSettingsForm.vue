@@ -1,8 +1,6 @@
 <template>
     <el-form
-        ref="formRef"
         :model="form"
-        :rules="rules"
         label-position="top"
         @submit.prevent="handleSubmit"
         class="space-y-6"
@@ -122,14 +120,11 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", "submit", "cancel"]);
 
-const formRef = ref(null);
 const form = ref({ ...props.modelValue });
 
 watch(
     () => props.modelValue,
     (val) => {
-        console.log("going to form", val);
-
         if (val) Object.assign(form.value, val);
     },
     { deep: true, immediate: true }
