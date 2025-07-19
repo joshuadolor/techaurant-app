@@ -100,6 +100,7 @@ import RestaurantInfoTab from "./tabs/RestaurantInfoTab.vue";
 import RestaurantContactTab from "./tabs/RestaurantContactTab.vue";
 import RestaurantHoursTab from "./tabs/RestaurantHoursTab.vue";
 import RestaurantSettingsTab from "./tabs/RestaurantSettingsTab.vue";
+import { jsonToFormData } from "@/utils/formData";
 
 const route = useRoute();
 const router = useRouter();
@@ -116,6 +117,14 @@ const { item, loading, error, execute } = useResourceMethod("restaurants", {
     model: Restaurant,
 });
 
+const {
+    loading: updateLogoLoading,
+    error: updateLogoError,
+    execute: updateLogo,
+} = useResourceMethod("restaurants", {
+    method: "update",
+});
+
 // Watch for item changes to update logo data
 watch(
     item,
@@ -129,40 +138,27 @@ watch(
 );
 
 const handleLogoChange = async ({ file, preview }) => {
-    try {
-        // Create FormData for the logo upload
-        const formData = new FormData();
-        formData.append("logo", file);
-
-        // Update the restaurant logo via API
-        // You'll need to implement this API call based on your backend
-        const response = await fetch(`/api/restaurants/${id}/logo`, {
-            method: "POST",
-            body: formData,
-        });
-
-        if (response.ok) {
-            notify.success({
-                message: "Restaurant logo updated successfully!",
-                position: "bottom-right",
-            });
-
-            // Refresh the restaurant data
-            await execute(id);
-        } else {
-            throw new Error("Failed to update logo");
-        }
-    } catch (error) {
-        notify.error({
-            message: "Failed to update restaurant logo",
-            position: "bottom-right",
-        });
-        console.error("Logo update error:", error);
-
-        // Revert to original logo on error
-        restaurantLogo.value = item.value?.logoUrl;
-        restaurantLogoPreview.value = item.value?.logoUrl;
-    }
+    notify.info({
+        message: "Updating logo...",
+        position: "bottom-right",
+    });
+    const formData = new FormData();
+    formData.append("logo", file);
+    formData.append("_method", "PUT");
+    await updateLogo(
+        id,
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        },
+        { isFormData: true, method: "post" }
+    );
+    notify.success({
+        message: "Logo updated!",
+        position: "bottom-right",
+    });
 };
 
 const editTab = (tabName) => {

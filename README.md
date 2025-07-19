@@ -21,6 +21,8 @@ A modern web application that enables restaurant owners to manage their menus an
 ## Color Scheme
 
 -   Primary: orange-400/#ff8904
+-   Secondary: slate-600/#475569
+-   Accent: amber-500/#f59e0b
 
 ## Prerequisites
 
@@ -100,6 +102,15 @@ app/Models/User.php - this should be defined here
 [ ] - Restaurant Logo update on Restaurant Form
 [ ] - Public Website MVP
 [ ] - Menu API
+.
+.
+.
+.
+[ ] - Address field on restaurant creation
+.
+.
+[ ] - WYSIWYG fields
+.
 .
 .
 .

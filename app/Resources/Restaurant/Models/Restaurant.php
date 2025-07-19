@@ -86,8 +86,8 @@ class Restaurant extends Model
         $configData = [
             'theme' => 'default',
             'currency' => 'USD',
-            'primary_color' => '#D35400',
-            'secondary_color' => '#2C3E50',
+            'primary_color' => '#ff8904',
+            'secondary_color' => '#475569',
             'timezone' => 'UTC',
             'language' => 'en',
         ];
@@ -121,6 +121,11 @@ class Restaurant extends Model
             } else {
                 $this->contact()->create($contactData);
             }
+        }
+
+        if(request()->has('logo_url')){
+            $configData['logo_url'] = request()->logo_url;
+            $this->config->update($configData);
         }
 
         // Update config information

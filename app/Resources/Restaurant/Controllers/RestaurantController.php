@@ -32,12 +32,10 @@ class RestaurantController extends ResourceController
     {
         $rules = $this->getValidationRules('update', $request);
         $validatedData = $this->validator->validate($request, $rules);
-
-        // Handle logo upload
+            // Handle logo upload
         if ($request->hasFile('logo')) {
             $fileUploadService = app(FileUploadService::class);
             $logoUrl = $fileUploadService->uploadLogo($request->file('logo'));
-            
             $request->merge(['logo_url' => $logoUrl]);
         }
 

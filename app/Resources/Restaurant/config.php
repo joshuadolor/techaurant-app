@@ -25,6 +25,7 @@ return [
                 'description' => 'sometimes|string',
                 'owner_id' => 'sometimes|exists:users,id',
                 'subdomain' => 'sometimes|string|max:255|unique:restaurants,subdomain,{id}',
+                'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'is_active' => 'sometimes|boolean',
                 'tagline' => 'sometimes|string|max:255',
                 'contact' => 'sometimes|array',

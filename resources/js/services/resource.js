@@ -17,13 +17,13 @@ class ResourceService {
         return ApiService.post(`${this.API_URL}`, data, config);
     }
 
-    async update(id, data, config = {}) {
+    async update(id, data, config = {}, { isFormData = false, method = 'put' } = {}) {
         const cleanData = Object.fromEntries(
             Object.entries(data).filter(
                 ([_, value]) => value !== "" && value !== null
             )
         );
-        return ApiService.put(`${this.API_URL}/${id}`, cleanData, config);
+        return ApiService[method](`${this.API_URL}/${id}`, isFormData ? data : cleanData, config);
     }
 
     async delete(id) {
