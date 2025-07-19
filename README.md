@@ -97,13 +97,11 @@ app/Models/User.php - this should be defined here
 
 ### Todo
 
-[ ] - Restaurant Creation Wizard/Form
-[ ] - API Restaurant Data
-[ ] - fix object as formdata - insert to contact
-[ ] - Restaurant Page (populate and update)
+[ ] - Restaurant Logo update on Restaurant Form
 [ ] - Public Website MVP
 [ ] - Menu API
 .
 .
 .
 [ ] - decouple usage of request() on the models
+[ ] - fix BOBO code on front end messy data flow,
