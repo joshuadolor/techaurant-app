@@ -9,14 +9,18 @@
         <div v-else>
             <!-- Header with restaurant name and actions -->
             <div class="restaurant-header">
-                <div class="flex items-center gap-4">
-                    <div v-if="item.logoUrl" class="flex-shrink-0">
-                        <img
-                            :src="item.logoUrl"
-                            :alt="item.name"
-                            class="restaurant-logo"
-                        />
-                    </div>
+                <div
+                    class="flex flex-col justify-center sm:flex-row items-center gap-4"
+                >
+                    <LogoUploader
+                        v-model:logo="restaurantLogo"
+                        v-model:logoPreview="restaurantLogoPreview"
+                        uploadText="Click to update logo"
+                        uploadHint="PNG, JPG up to 2MB"
+                        :altText="item.name"
+                        class="restaurant-logo"
+                        @change="handleLogoChange"
+                    />
                     <div class="flex flex-col gap-2">
                         <PageTitle class="text-orange-400 text-3xl">
                             {{ item.name }}
@@ -85,9 +89,9 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import PageTitle from "@/components/PageTitle";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref, provide } from "vue";
+import { onMounted, ref, provide, watch } from "vue";
 import { notify } from "@/utils/notification";
-
+import LogoUploader from "@/components/FormElements/LogoUploader/index.vue";
 import Restaurant from "@/models/Restaurant";
 import useResourceMethod from "@/composables/useResourceMethod";
 
@@ -103,10 +107,63 @@ const { id } = route.params;
 
 const activeTab = ref("info");
 
+// Reactive properties for logo
+const restaurantLogo = ref(null);
+const restaurantLogoPreview = ref("");
+
 const { item, loading, error, execute } = useResourceMethod("restaurants", {
     method: "get",
     model: Restaurant,
 });
+
+// Watch for item changes to update logo data
+watch(
+    item,
+    (newItem) => {
+        if (newItem) {
+            restaurantLogo.value = newItem.logoUrl;
+            restaurantLogoPreview.value = newItem.logoUrl;
+        }
+    },
+    { immediate: true }
+);
+
+const handleLogoChange = async ({ file, preview }) => {
+    try {
+        // Create FormData for the logo upload
+        const formData = new FormData();
+        formData.append("logo", file);
+
+        // Update the restaurant logo via API
+        // You'll need to implement this API call based on your backend
+        const response = await fetch(`/api/restaurants/${id}/logo`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (response.ok) {
+            notify.success({
+                message: "Restaurant logo updated successfully!",
+                position: "bottom-right",
+            });
+
+            // Refresh the restaurant data
+            await execute(id);
+        } else {
+            throw new Error("Failed to update logo");
+        }
+    } catch (error) {
+        notify.error({
+            message: "Failed to update restaurant logo",
+            position: "bottom-right",
+        });
+        console.error("Logo update error:", error);
+
+        // Revert to original logo on error
+        restaurantLogo.value = item.value?.logoUrl;
+        restaurantLogoPreview.value = item.value?.logoUrl;
+    }
+};
 
 const editTab = (tabName) => {
     router.push(`/restaurants/${id}/edit?tab=${tabName}`);

@@ -25,48 +25,16 @@
 
                 <div class="logo-upload-container">
                     <BaseFormItem label="Upload Logo" prop="logo">
-                        <el-upload
-                            class="logo-uploader flex justify-center items-center p-4"
-                            :show-file-list="false"
-                            :auto-upload="false"
-                            accept="image/*"
-                            @change="handleFileChange"
-                        >
-                            <div class="logo-upload-area">
-                                <img
-                                    v-if="form.logoPreview || form.logo"
-                                    :src="
-                                        form.logoPreview ||
-                                        (form.logo instanceof File
-                                            ? URL.createObjectURL(form.logo)
-                                            : form.logo)
-                                    "
-                                    class="logo-preview"
-                                />
-                                <div v-else class="logo-placeholder p-4">
-                                    <el-icon class="logo-uploader-icon">
-                                        <Plus />
-                                    </el-icon>
-                                    <p class="upload-text">
-                                        Click to upload logo
-                                    </p>
-                                    <p class="upload-hint">
-                                        PNG, JPG up to 2MB
-                                    </p>
-                                </div>
-                            </div>
-                        </el-upload>
+                        <LogoUploader
+                            v-model:logo="form.logo"
+                            v-model:logoPreview="form.logoPreview"
+                            uploadText="Click to upload logo"
+                            uploadHint="PNG, JPG up to 2MB"
+                            cropperTitle="Crop Restaurant Logo"
+                            imageType="Logo"
+                            showTips
+                        />
                     </BaseFormItem>
-
-                    <div class="logo-tips">
-                        <h4>Logo Tips:</h4>
-                        <ul>
-                            <li>Use a square image (1:1 ratio)</li>
-                            <li>High resolution (at least 200x200px)</li>
-                            <li>Clear background works best</li>
-                            <li>Keep file size under 2MB</li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             <!-- Left Column - Basic Info -->
@@ -165,33 +133,6 @@
             </div>
         </div>
 
-        <!-- Cropper Dialog -->
-        <el-dialog
-            v-model="showCropper"
-            title="Crop Restaurant Logo"
-            :fullscreen="isMobile"
-            class="cropper-dialog"
-            width="800px"
-        >
-            <div class="flex justify-center items-center min-h-[400px]">
-                <Cropper
-                    v-if="imageUrl"
-                    class="w-full h-[400px] bg-gray-100 rounded-lg"
-                    :src="imageUrl"
-                    :stencil-props="{ aspectRatio: 1 }"
-                    ref="cropper"
-                />
-            </div>
-            <template #footer>
-                <div class="flex justify-end gap-3">
-                    <el-button @click="showCropper = false">Cancel</el-button>
-                    <el-button type="primary" @click="cropImage"
-                        >Save Logo</el-button
-                    >
-                </div>
-            </template>
-        </el-dialog>
-
         <!-- Action Buttons -->
         <div
             class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mt-8"
@@ -226,17 +167,15 @@
 <script setup>
 import { reactive, ref, computed, onMounted, onUnmounted } from "vue";
 import {
-    Plus,
     Location,
     Picture,
     ArrowLeft,
     Check,
     House,
 } from "@element-plus/icons-vue";
-import { Cropper } from "vue-advanced-cropper";
-import "vue-advanced-cropper/dist/style.css";
 import { getRules } from "./schema";
 import useApiMethod from "@/composables/useApiMethod";
+import LogoUploader from "@/components/FormElements/LogoUploader/index.vue";
 
 const props = defineProps({
     modelValue: {
@@ -271,58 +210,11 @@ const {
 
 const isSubmitting = ref(false);
 const form = reactive({ ...props.modelValue });
-const isMobile = ref(false);
-
 const rules = computed(() => getRules());
 
-const showCropper = ref(false);
-const imageUrl = ref("");
-const cropper = ref(null);
-
-// Detect mobile device
-const checkMobile = () => {
-    isMobile.value = window.innerWidth <= 768;
-};
-
 onMounted(() => {
-    checkMobile();
     fetchCountries();
-    window.addEventListener("resize", checkMobile);
 });
-
-onUnmounted(() => {
-    window.removeEventListener("resize", checkMobile);
-});
-
-const handleFileChange = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        imageUrl.value = e.target.result;
-        showCropper.value = true;
-    };
-    reader.readAsDataURL(file.raw);
-};
-
-const cropImage = () => {
-    const { canvas } = cropper.value.getResult();
-
-    // Convert canvas to blob
-    canvas.toBlob((blob) => {
-        // Create a File object from the blob
-        const file = new File([blob], "cropped-logo.png", {
-            type: "image/png",
-            lastModified: Date.now(),
-        });
-
-        // Store the file object instead of base64
-        form.logo = file;
-
-        // Also store the preview URL for display
-        form.logoPreview = canvas.toDataURL();
-
-        showCropper.value = false;
-    }, "image/png");
-};
 
 const handleSubmit = async (values) => {
     await props.submitAction(values);
@@ -393,114 +285,6 @@ const handleSubmit = async (values) => {
     top: 20px;
 }
 
-.logo-upload-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.logo-uploader {
-    width: 100%;
-}
-
-.logo-upload-area {
-    border: 2px dashed #d9d9d9;
-    border-radius: 12px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    background: #fafafa;
-}
-
-.logo-upload-area:hover {
-    border-color: #f08a5c;
-    background: #fff5f2;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(240, 138, 92, 0.15);
-}
-
-.logo-placeholder {
-    text-align: center;
-    color: #8c939d;
-}
-
-.logo-uploader-icon {
-    font-size: 48px;
-    color: #f08a5c;
-    margin-bottom: 12px;
-}
-
-.upload-text {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 8px 0 4px 0;
-    color: #2c3e50;
-}
-
-.upload-hint {
-    font-size: 0.9rem;
-    color: #6c757d;
-    margin: 0;
-}
-
-.logo-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.logo-tips {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    border-left: 4px solid #f08a5c;
-}
-
-.logo-tips h4 {
-    margin: 0 0 12px 0;
-    color: #2c3e50;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.logo-tips ul {
-    margin: 0;
-    padding-left: 20px;
-    color: #6c757d;
-}
-
-.logo-tips li {
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-}
-
-.cropper-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-}
-
-.cropper {
-    width: 100%;
-    height: 400px;
-    background: #f5f5f5;
-    border-radius: 8px;
-}
-
-.cropper-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-}
-
 .form-actions {
     background: #ffffff;
     border-radius: 12px;
@@ -542,23 +326,6 @@ const handleSubmit = async (values) => {
 
     .action-buttons .el-button {
         width: 100%;
-    }
-
-    .cropper {
-        height: calc(100vh - 200px);
-        min-height: 300px;
-    }
-
-    .cropper-dialog .el-dialog {
-        margin: 0;
-        height: 100vh;
-        max-height: 100vh;
-    }
-
-    .cropper-dialog .el-dialog__body {
-        padding: 10px;
-        height: calc(100vh - 120px);
-        overflow: hidden;
     }
 }
 
