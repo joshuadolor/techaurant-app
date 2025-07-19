@@ -13,6 +13,7 @@ class Restaurant extends BaseModel {
         this._phone = data.phone;
         this._email = data.email;
         this._website = data.website;
+        this._slug = data.slug;
         this._logo = data.logo;
         this._is_active = !!data.is_active;
         this._is_verified = !!data.is_verified;
@@ -132,6 +133,14 @@ class Restaurant extends BaseModel {
 
     get config() {
         return this._config;
+    }
+
+    get websiteUrl() {
+        return `${window.location.origin}/r/${this._slug}`;
+    }
+
+    get uuidUrl() {
+        return `${window.location.origin}/rid/${this._uuid}`;
     }
 }
 

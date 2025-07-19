@@ -31,6 +31,11 @@
                         <p class="text-gray-500 text-sm italic">
                             created at {{ item.createdAt }}
                         </p>
+                        <div class="flex gap-2">
+                            <el-button type="primary" @click="openWebsite">
+                                Open Website
+                            </el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,7 +105,6 @@ import RestaurantInfoTab from "./tabs/RestaurantInfoTab.vue";
 import RestaurantContactTab from "./tabs/RestaurantContactTab.vue";
 import RestaurantHoursTab from "./tabs/RestaurantHoursTab.vue";
 import RestaurantSettingsTab from "./tabs/RestaurantSettingsTab.vue";
-import { jsonToFormData } from "@/utils/formData";
 
 const route = useRoute();
 const router = useRouter();
@@ -163,6 +167,10 @@ const handleLogoChange = async ({ file, preview }) => {
 
 const editTab = (tabName) => {
     router.push(`/restaurants/${id}/edit?tab=${tabName}`);
+};
+
+const openWebsite = () => {
+    window.open(item.value.websiteUrl, "_blank");
 };
 
 provide("refreshData", async () => {
