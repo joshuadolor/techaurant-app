@@ -1,75 +1,62 @@
 describe('Restaurant visibility per user', () => {
-  const username = 'testuser1';
-  const email = 'testuser1@gmail.com';
-  const password = 'password';
+  const user1 = {
+    username: 'testuser811',
+    email: 'testuser811@gmail.com',
+    password: 'password'
+  };
 
-  let confirmationLink;
+  const user2 = {
+    username: 'testuser812',
+    email: 'testuser812@gmail.com',
+    password: 'password'
+  };
 
-  describe('Registration Page', () => {
-    it('registers a new user account', () => {
-      cy.registerUser(username, email, password);
-    });
-  });
+  const restaurantDetails = {
+    name: 'user1_restaurant',
+    tagline: 'user1_tagline',
+    description: 'user1_description',
+    image: 'google.png',
+    phone: 'user1_number',
+    address: 'user1_address'
+  };
 
-  describe('MailHog Verification Page', () => {
-    it('fetches the confirmation email and gets the Verify Email Address link', () => {
-      cy.getLatestEmailConfirmationLink().then((link) => {
-        confirmationLink = link;
-      });
-    });
+  context('User 1 Flow - Register, Verify, Create Restaurant', () => {
+    it('registers, verifies, logs in, and creates a restaurant', () => {
+      cy.registerUser(user1.username, user1.email, user1.password);
+      cy.verifyEmailFromMailhog();
+      cy.loginUser(user1.email, user1.password);
 
-    it('visits the confirmation link to activate the user', () => {
-      cy.visit('http://localhost:8025/');
-      console.log('registerUser got:', { username, email, password });
+      // Navigate to restaurant section and create one
+      cy.get(':nth-child(3) > .mt-2 > li > .flex > :nth-child(2)').click();
+      cy.get('.el-button > span').click(); // Add restaurant button
 
-      cy.get('.messages > :nth-child(1)').click();
-      cy.get('.content').should('contain.text', 'verify-email');
-
-      cy.get('.content')
-        .invoke('text')
-        .then((body) => {
-          const cleaned = body.replace(/=\r?\n/g, '').replace(/=3D/g, '=');
-          const match = cleaned.match(/http:\/\/localhost:8000\/verify-email\/[^\s]+/);
-          confirmationLink = match?.[0];
-          expect(confirmationLink).to.exist;
-
-          cy.visit(confirmationLink, { failOnStatusCode: false });
-          cy.url({ timeout: 10000 }).should('include', '/login');
-          cy.wait(1000);
-        });
-    });
-  });
-
-  describe.only('Login Page', () => {
-    it('logs in the confirmed user', () => {
-      cy.visit('http://localhost:8000/login');
-      cy.get('[placeholder="Enter your email"]').type(email);
-      cy.get('[placeholder="Enter your password"]').type(password);
-      cy.get('.el-button').click();
-
-      cy.get('.text-2xl.font-bold').should('contain.text', 'Dashboard Overview');
-
-      
-      cy.get(':nth-child(3) > .mt-2 > li > .flex > :nth-child(2)').click(); //opens the restaurant
-      cy.get('.el-button > span').click(); //clicks the add restaurant button
-      cy.get('[placeholder="Enter your restaurant name"]').type('user1_restaurant')
-      cy.get('[placeholder="A short description of your restaurant"]').type('user1_tagline')
-      cy.get('[placeholder="Tell customers about your restaurant"]').type('user1_description')
-      cy.get('input[type="file"]').attachFile('google.png')
-      cy.contains('button', 'Save').should('exist')
-      cy.wait(500)
+      cy.get('[placeholder="Enter your restaurant name"]').type(restaurantDetails.name);
+      cy.get('[placeholder="A short description of your restaurant"]').type(restaurantDetails.tagline);
+      cy.get('[placeholder="Tell customers about your restaurant"]').type(restaurantDetails.description);
+      cy.get('input[type="file"]').attachFile(restaurantDetails.image);
+      cy.wait(1000);
       cy.contains('button', 'Save').click();
-      cy.get('[placeholder="+1 (555) 555-5555"]').type('user1_number')
-      cy.get('[placeholder="Enter your restaurant address"]').type('user1_address')
+      cy.get('[placeholder="+1 (555) 555-5555"]').type(restaurantDetails.phone);
+      cy.get('[placeholder="Enter your restaurant address"]').type(restaurantDetails.address);
       cy.get('button[type="submit"]').click();
 
-
-
-
-
-      
+      // Logout
+      cy.get(':nth-child(4) > .mt-2 > :nth-child(1) > .flex').click();
+      cy.url().should('include', '/account');
+      cy.get('.bg-blue-500').click();
+      cy.contains('Logged out successfully!');
     });
   });
 
+  context('User 2 Flow - Register, Verify, Login and Confirm No Restaurant Visibility', () => {
+    it('registers, verifies and logs in second user', () => {
+      cy.registerUser(user2.username, user2.email, user2.password);
+      cy.verifyEmailFromMailhog();
+      cy.loginUser(user2.email, user2.password);
 
+      // Check restaurant list should be empty
+      cy.get(':nth-child(3) > .mt-2 > li > .flex > :nth-child(2)').click();
+      cy.contains('No items found');
+    });
+  });
 });
