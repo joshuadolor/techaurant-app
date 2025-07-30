@@ -96,7 +96,7 @@ const routes = [
     {
         path: '/tags',
         name: 'tags',
-        component: () => import('@/pages/Menus'),
+        component: () => import('@/pages/Tags'),
     },
     {
         path: '/email/resend-verification',
