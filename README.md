@@ -99,14 +99,14 @@ app/Models/User.php - this should be defined here
 
 ### Todo
 
-[ ] - Restaurant Logo update on Restaurant Form
-[ ] - Public Website MVP
+[/] - Restaurant Logo update on Restaurant Form
+[/] - Public Website MVP
 [ ] - Menu API
 .
 .
+[ ] - translations
 .
 .
-[ ] - Address field on restaurant creation
 .
 .
 [ ] - WYSIWYG fields
