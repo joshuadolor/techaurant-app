@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->longText('description')->nullable();
             $table->string('primary_image_url')->nullable();
             $table->boolean('is_active')->default(true);

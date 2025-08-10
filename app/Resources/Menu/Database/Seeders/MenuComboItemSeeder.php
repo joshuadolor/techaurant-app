@@ -48,77 +48,23 @@ class MenuComboItemSeeder extends Seeder
      */
     private function createComboItems($menuItems): void
     {
-        // Define realistic combo combinations - each combination is unique
-        $comboDefinitions = [
-            // Burger Combo: Burger + Fries + Drink
-            [
-                'main_item_name' => 'Beef Burger',
-                'combo_items' => [
-                    ['name' => 'French Fries', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Salmon Combo: Salmon + Side + Drink
-            [
-                'main_item_name' => 'Grilled Salmon',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Pasta Combo: Pasta + Side + Salad
-            [
-                'main_item_name' => 'Pasta Carbonara',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                    ['name' => 'Caesar Salad', 'quantity' => 1.00],
-                ]
-            ],
-            // Appetizer Combo: Multiple appetizers
-            [
-                'main_item_name' => 'Bruschetta',
-                'combo_items' => [
-                    ['name' => 'Caesar Salad', 'quantity' => 1.00],
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                ]
-            ],
-            // Dessert Combo: Multiple desserts
-            [
-                'main_item_name' => 'Chocolate Cake',
-                'combo_items' => [
-                    ['name' => 'Tiramisu', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Caesar Salad Combo: Salad + Side + Drink
-            [
-                'main_item_name' => 'Caesar Salad',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 0.50], // Half portion
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-        ];
+        if ($menuItems->count() < 3) {
+            $this->command->warn('Need at least 3 menu items to create combos. Skipping...');
+            return;
+        }
 
         $createdCombos = 0;
         $skippedCombos = 0;
 
-        foreach ($comboDefinitions as $comboDef) {
-            $mainItem = $menuItems->where('name', $comboDef['main_item_name'])->first();
+        // Create combos by randomly selecting items and ensuring uniqueness
+        $mainItems = $menuItems->random(min(5, $menuItems->count())); // Select up to 5 main items
+        
+        foreach ($mainItems as $mainItem) {
+            // For each main item, create 1-3 combo items
+            $comboCount = rand(1, 3);
+            $availableComboItems = $menuItems->where('id', '!=', $mainItem->id)->random(min($comboCount, $menuItems->count() - 1));
             
-            if (!$mainItem) {
-                $this->command->warn("Main item '{$comboDef['main_item_name']}' not found, skipping combo...");
-                continue;
-            }
-
-            foreach ($comboDef['combo_items'] as $comboItemDef) {
-                $comboItem = $menuItems->where('name', $comboItemDef['name'])->first();
-                
-                if (!$comboItem) {
-                    $this->command->warn("Combo item '{$comboItemDef['name']}' not found, skipping...");
-                    continue;
-                }
-
+            foreach ($availableComboItems as $comboItem) {
                 // Check if this combination already exists
                 $existingCombo = MenuComboItem::where('main_menu_item_id', $mainItem->id)
                     ->where('menu_item_id', $comboItem->id)
@@ -130,19 +76,30 @@ class MenuComboItemSeeder extends Seeder
                     continue;
                 }
 
-                // Create the combo relationship
+                // Create the combo relationship with random quantity
+                $quantity = $this->getRandomQuantity();
+                
                 MenuComboItem::create([
                     'main_menu_item_id' => $mainItem->id,
                     'menu_item_id' => $comboItem->id,
-                    'quantity' => $comboItemDef['quantity'],
+                    'quantity' => $quantity,
                 ]);
 
                 $createdCombos++;
-                $this->command->info("Created combo: {$mainItem->name} + {$comboItem->name} (qty: {$comboItemDef['quantity']})");
+                $this->command->info("Created combo: {$mainItem->name} + {$comboItem->name} (qty: {$quantity})");
             }
         }
 
         $this->command->info("Created {$createdCombos} new combo items, skipped {$skippedCombos} existing combinations");
+    }
+
+    /**
+     * Get a random quantity for combo items
+     */
+    private function getRandomQuantity(): float
+    {
+        $quantities = [0.5, 1.0, 1.5, 2.0];
+        return $quantities[array_rand($quantities)];
     }
 
     /**

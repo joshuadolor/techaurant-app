@@ -17,9 +17,6 @@ return new class extends Migration
             $table->foreignId('menu_item_id')->constrained('menu_items')->onDelete('cascade');
             $table->decimal('quantity', 10, 2)->nullable()->comment('The quantity of the menu item in the combo');
             $table->timestamps();
-            
-            // Ensure each combination is unique
-            $table->unique(['main_menu_item_id', 'menu_item_id'], 'menu_combo_items_unique_combination');
         });
     }
 
@@ -29,7 +26,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('menu_combo_items', function (Blueprint $table) {
-            $table->dropUnique('menu_combo_items_unique_combination');
             $table->dropForeign(['main_menu_item_id']);
             $table->dropForeign(['menu_item_id']);
         });

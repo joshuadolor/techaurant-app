@@ -24,31 +24,37 @@ class ComprehensiveMenuSeeder extends Seeder
         $this->command->info('Seeding comprehensive Menu data...');
 
         // Get or create a user for ownership
-        $user = User::where('role', 'user')->first() ?? User::factory()->create();
+        $users = User::where('role', 'user')->inRandomOrder()->limit(10)->get();
+        if ($users->count() < 10) {
+            $usersToCreate = 10 - $users->count();
+            $users = $users->merge(User::factory()->count($usersToCreate)->create());
+        }
 
-        // Create 2 menus
-        $menus = $this->createMenus($user);
-        $this->command->info('Created ' . count($menus) . ' menus');
-
-        // Create 5 categories
-        $categories = $this->createCategories($user);
-        $this->command->info('Created ' . count($categories) . ' categories');
-
-        // Create 10 menu items
-        $menuItems = $this->createMenuItems($user);
-        $this->command->info('Created ' . count($menuItems) . ' menu items');
-
-        // Associate categories with menus
-        $this->associateCategoriesWithMenus($menus, $categories);
-        $this->command->info('Associated categories with menus');
-
-        // Associate menu items with categories
-        $this->associateMenuItemsWithCategories($menuItems, $categories);
-        $this->command->info('Associated menu items with categories');
-
-        // Create combo items
-        $this->createComboItems($menuItems);
-        $this->command->info('Created combo items');
+        foreach ($users as $user) {
+            // Create 2 menus
+            $menus = $this->createMenus($user);
+            $this->command->info('Created ' . count($menus) . ' menus');
+    
+            // Create 5 categories
+            $categories = $this->createCategories($user);
+            $this->command->info('Created ' . count($categories) . ' categories');
+    
+            // Create 10 menu items
+            $menuItems = $this->createMenuItems($user);
+            $this->command->info('Created ' . count($menuItems) . ' menu items');
+    
+            // Associate categories with menus
+            $this->associateCategoriesWithMenus($menus, $categories);
+            $this->command->info('Associated categories with menus');
+    
+            // Associate menu items with categories
+            $this->associateMenuItemsWithCategories($menuItems, $categories);
+            $this->command->info('Associated menu items with categories');
+    
+            // Create combo items
+            $this->createComboItems($menuItems);
+            $this->command->info('Created combo items');
+        }
 
         // Mark seeder as run
         $this->markAsRun();
@@ -118,75 +124,77 @@ class ComprehensiveMenuSeeder extends Seeder
      */
     private function createMenuItems(User $user): array
     {
+        $faker = \Faker\Factory::create();
+
         $itemData = [
             [
-                'name' => 'Bruschetta',
-                'description' => 'Toasted bread topped with fresh tomatoes, basil, and olive oil',
-                'price' => 8.99,
-                'preparation_time' => 10,
-                'slug' => 'bruschetta',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Caesar Salad',
-                'description' => 'Crisp romaine lettuce with Caesar dressing, croutons, and parmesan',
-                'price' => 12.99,
-                'preparation_time' => 8,
-                'slug' => 'caesar-salad',
+                'name' => $faker->unique()->words(2, true), 
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Grilled Salmon',
-                'description' => 'Fresh Atlantic salmon grilled to perfection with seasonal vegetables',
-                'price' => 28.99,
-                'preparation_time' => 20,
-                'slug' => 'grilled-salmon',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Beef Burger',
-                'description' => 'Juicy beef patty with lettuce, tomato, and special sauce',
-                'price' => 16.99,
-                'preparation_time' => 15,
-                'slug' => 'beef-burger',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Garlic Bread',
-                'description' => 'Warm bread brushed with garlic butter and herbs',
-                'price' => 4.99,
-                'preparation_time' => 5,
-                'slug' => 'garlic-bread',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Chocolate Cake',
-                'description' => 'Rich chocolate layer cake with chocolate ganache',
-                'price' => 9.99,
-                'preparation_time' => 2,
-                'slug' => 'chocolate-cake',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Iced Tea',
-                'description' => 'Refreshing iced tea with lemon',
-                'price' => 3.99,
-                'preparation_time' => 1,
-                'slug' => 'iced-tea',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Pasta Carbonara',
-                'description' => 'Spaghetti with creamy carbonara sauce, bacon, and parmesan',
-                'price' => 22.99,
-                'preparation_time' => 18,
-                'slug' => 'pasta-carbonara',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'French Fries',
-                'description' => 'Crispy golden fries seasoned with sea salt',
-                'price' => 6.99,
-                'preparation_time' => 8,
-                'slug' => 'french-fries',
+                'name' => $faker->unique()->words(2, true),
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
+                'slug' => $faker->unique()->slug(2),
             ],
             [
-                'name' => 'Tiramisu',
-                'description' => 'Classic Italian dessert with coffee-soaked ladyfingers and mascarpone',
-                'price' => 11.99,
-                'preparation_time' => 2,
+                'name' => 'Tiramisu', // Keep this one fixed as it's used as a marker
+                'description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 5, 40),
+                'preparation_time' => $faker->numberBetween(1, 30),
                 'slug' => 'tiramisu',
             ],
         ];
@@ -262,77 +270,24 @@ class ComprehensiveMenuSeeder extends Seeder
      */
     private function createComboItems(array $menuItems): void
     {
-        // Define realistic combo combinations - each combination is unique
-        $comboDefinitions = [
-            // Burger Combo: Burger + Fries + Drink
-            [
-                'main_item_name' => 'Beef Burger',
-                'combo_items' => [
-                    ['name' => 'French Fries', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Salmon Combo: Salmon + Side + Drink
-            [
-                'main_item_name' => 'Grilled Salmon',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Pasta Combo: Pasta + Side + Salad
-            [
-                'main_item_name' => 'Pasta Carbonara',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                    ['name' => 'Caesar Salad', 'quantity' => 1.00],
-                ]
-            ],
-            // Appetizer Combo: Multiple appetizers
-            [
-                'main_item_name' => 'Bruschetta',
-                'combo_items' => [
-                    ['name' => 'Caesar Salad', 'quantity' => 1.00],
-                    ['name' => 'Garlic Bread', 'quantity' => 1.00],
-                ]
-            ],
-            // Dessert Combo: Multiple desserts
-            [
-                'main_item_name' => 'Chocolate Cake',
-                'combo_items' => [
-                    ['name' => 'Tiramisu', 'quantity' => 1.00],
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-            // Caesar Salad Combo: Salad + Side + Drink
-            [
-                'main_item_name' => 'Caesar Salad',
-                'combo_items' => [
-                    ['name' => 'Garlic Bread', 'quantity' => 0.50], // Half portion
-                    ['name' => 'Iced Tea', 'quantity' => 1.00],
-                ]
-            ],
-        ];
+        if (count($menuItems) < 3) {
+            $this->command->warn('Need at least 3 menu items to create combos. Skipping...');
+            return;
+        }
 
         $createdCombos = 0;
         $skippedCombos = 0;
 
-        foreach ($comboDefinitions as $comboDef) {
-            $mainItem = $this->findMenuItemByName($menuItems, $comboDef['main_item_name']);
+        // Create combos by randomly selecting items and ensuring uniqueness
+        $mainItems = array_slice($menuItems, 0, min(5, count($menuItems))); // Select up to 5 main items
+        
+        foreach ($mainItems as $mainItem) {
+            // For each main item, create 1-3 combo items
+            $comboCount = rand(1, 3);
+            $availableComboItems = array_filter($menuItems, fn($item) => $item->id !== $mainItem->id);
+            $selectedComboItems = array_slice($availableComboItems, 0, min($comboCount, count($availableComboItems)));
             
-            if (!$mainItem) {
-                $this->command->warn("Main item '{$comboDef['main_item_name']}' not found, skipping combo...");
-                continue;
-            }
-
-            foreach ($comboDef['combo_items'] as $comboItemDef) {
-                $comboItem = $this->findMenuItemByName($menuItems, $comboItemDef['name']);
-                
-                if (!$comboItem) {
-                    $this->command->warn("Combo item '{$comboItemDef['name']}' not found, skipping...");
-                    continue;
-                }
-
+            foreach ($selectedComboItems as $comboItem) {
                 // Check if this combination already exists
                 $existingCombo = \App\Resources\Menu\Models\MenuComboItem::where('main_menu_item_id', $mainItem->id)
                     ->where('menu_item_id', $comboItem->id)
@@ -344,15 +299,17 @@ class ComprehensiveMenuSeeder extends Seeder
                     continue;
                 }
 
-                // Create the combo relationship
+                // Create the combo relationship with random quantity
+                $quantity = $this->getRandomQuantity();
+                
                 \App\Resources\Menu\Models\MenuComboItem::create([
                     'main_menu_item_id' => $mainItem->id,
                     'menu_item_id' => $comboItem->id,
-                    'quantity' => $comboItemDef['quantity'],
+                    'quantity' => $quantity,
                 ]);
 
                 $createdCombos++;
-                $this->command->info("Created combo: {$mainItem->name} + {$comboItem->name} (qty: {$comboItemDef['quantity']})");
+                $this->command->info("Created combo: {$mainItem->name} + {$comboItem->name} (qty: {$quantity})");
             }
         }
 
@@ -360,17 +317,15 @@ class ComprehensiveMenuSeeder extends Seeder
     }
 
     /**
-     * Helper method to find menu item by name
+     * Get a random quantity for combo items
      */
-    private function findMenuItemByName(array $menuItems, string $name): ?\App\Resources\Menu\Models\MenuItem
+    private function getRandomQuantity(): float
     {
-        foreach ($menuItems as $item) {
-            if ($item->name === $name) {
-                return $item;
-            }
-        }
-        return null;
+        $quantities = [0.5, 1.0, 1.5, 2.0];
+        return $quantities[array_rand($quantities)];
     }
+
+
 
     /**
      * Check if seeder has already been run
