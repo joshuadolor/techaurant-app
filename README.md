@@ -65,6 +65,7 @@ docker compose exec app php artisan key:generate
 docker compose exec app php artisan migrate
 
 docker compose exec app php artisan resource:migrate
+docker compose exec app php artisan db:seed --class=App\\Resources\\Menu\\Database\\Seeders\\ComprehensiveMenuSeeder
 
 # Seed the database with initial data
 docker compose exec app php artisan db:seed

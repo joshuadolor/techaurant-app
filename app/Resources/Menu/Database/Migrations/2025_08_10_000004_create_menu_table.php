@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_available')->default(true);
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

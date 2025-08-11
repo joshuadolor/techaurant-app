@@ -35,6 +35,10 @@ class Menu extends Model
         'id',
     ];
 
+    protected $with = [
+        'categories.menuItems',
+    ];
+
     /**
      * Get the owner of the menu.
      */
