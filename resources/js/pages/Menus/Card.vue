@@ -1,13 +1,13 @@
-<!-- resources/js/pages/RestaurantManagement/Card.vue -->
+<!-- resources/js/pages/Menus/Card.vue -->
 <template>
     <div
-        class="restaurant-card space-y-3 cursor-pointer"
-        @click="navigateToRestaurant"
+        class="menu-card space-y-3 cursor-pointer"
+        @click="navigateToMenu"
     >
-        <!-- Restaurant Image/Logo -->
+        <!-- Menu Image -->
         <div class="relative aspect-video rounded-lg overflow-hidden">
             <el-image
-                :src="item.cover_image || item.logoUrl"
+                :src="item.primaryImageUrl || '/images/menu-placeholder.jpg'"
                 class="w-full h-full"
                 fit="cover"
             >
@@ -31,43 +31,30 @@
             </div>
         </div>
 
-        <!-- Restaurant Info -->
+        <!-- Menu Info -->
         <div class="space-y-2">
-            <!-- Name and Cuisine -->
+            <!-- Name and Description -->
             <div>
                 <h3 class="text-lg font-semibold line-clamp-1">
                     {{ item.name }}
                 </h3>
-                <p class="text-sm text-gray-500">{{ item.cuisine_type }}</p>
+                <p class="text-sm text-gray-500 line-clamp-2">
+                    {{ item.description || "No description available" }}
+                </p>
             </div>
 
             <!-- Quick Stats -->
             <div class="flex gap-4 text-sm text-gray-600">
                 <div class="flex items-center gap-1">
-                    <el-icon><Star /></el-icon>
-                    <span>{{ item.rating || "New" }}</span>
+                    <el-icon><Folder /></el-icon>
+                    <span>{{ item.categoriesCount || 0 }} Categories</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <el-icon><Timer /></el-icon>
-                    <span>{{ item.delivery_time }}min</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <el-icon><Money /></el-icon>
-                    <span>{{ item.min_order_amount }}</span>
+                    <el-icon><Food /></el-icon>
+                    <span>{{ item.itemsCount || 0 }} Items</span>
                 </div>
             </div>
 
-            <!-- Location -->
-            <div class="flex items-start gap-2 text-sm text-gray-600">
-                <el-icon class="mt-0.5"><Location /></el-icon>
-                <span class="line-clamp-2">{{ item.address }}</span>
-            </div>
-
-            <!-- Business Hours -->
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-                <el-icon><Clock /></el-icon>
-                <span>{{ formatBusinessHours(item.business_hours) }}</span>
-            </div>
         </div>
     </div>
 </template>
@@ -75,11 +62,11 @@
 <script setup>
 import { useRouter } from "vue-router";
 import {
-    Location,
-    Clock,
-    Star,
-    Timer,
-    Money,
+    Folder,
+    Food,
+    Calendar,
+    Link,
+    User,
     Picture,
 } from "@element-plus/icons-vue";
 
@@ -92,29 +79,37 @@ const props = defineProps({
 
 const router = useRouter();
 
-const navigateToRestaurant = () => {
+const navigateToMenu = () => {
     router.push({
-        name: "restaurant.view",
+        name: "menu.view",
         params: {
-            id: props.item.id,
+            id: item.id,
         },
     });
 };
 
-// Helper function to format business hours
-const formatBusinessHours = (hours) => {
-    if (!hours) return "Hours not set";
-    // You can implement your own formatting logic here
-    return hours;
-};
 </script>
 
 <style scoped>
-.restaurant-card {
-    @apply transition-all duration-200;
+.menu-card {
+    transition: all 0.2s;
 }
 
-.restaurant-card:hover {
-    @apply transform scale-[1.02];
+.menu-card:hover {
+    transform: scale(1.02);
+}
+
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 </style>

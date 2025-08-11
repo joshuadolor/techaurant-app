@@ -29,4 +29,34 @@ return [
         ],
         'searchable' => ['name', 'slug'],
     ],
+    [
+        'name' => 'menu-items',
+        'controller' => App\Resources\Menu\Controllers\MenuItemController::class,
+        'model' => App\Resources\Menu\Models\MenuItem::class,
+        'validation' => [
+            'store' => [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric',
+                'preparation_time' => 'required|integer',
+                'is_active' => 'boolean',
+                'is_combo' => 'boolean',
+                'menu_category_id' => 'required|exists:menu_categories,id',
+            ],
+            'update' => [
+                'name' => 'sometimes|string|max:255',
+                'description' => 'sometimes|string',
+                'price' => 'sometimes|numeric',
+                'preparation_time' => 'sometimes|integer',
+                'is_active' => 'sometimes|boolean',
+                'is_combo' => 'sometimes|boolean',
+                'menu_category_id' => 'sometimes|exists:menu_categories,id',
+            ]
+        ],
+        'relationships' => ['menuCategory'],
+        'filterable' => [
+            'menu_category_id', 'owner_id',
+        ],
+        'searchable' => ['name', 'slug'],
+    ],
 ];

@@ -91,7 +91,7 @@ const routes = [
     {
         path: '/menu-items',
         name: 'menu-items',
-        component: () => import('@/pages/Menus'),
+        component: () => import('@/pages/MenuItems'),
     },
     {
         path: '/tags',

@@ -84,14 +84,6 @@ class MenuItem extends Model
     }
 
     /**
-     * Get the main combo items where this item is the main item.
-     */
-    public function mainComboItems(): HasMany
-    {
-        return $this->hasMany(MenuComboItem::class, 'main_menu_item_id');
-    }
-
-    /**
      * Scope to get only active menu items.
      */
     public function scopeActive($query)

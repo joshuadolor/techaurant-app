@@ -29,6 +29,8 @@ class MenuItemSeeder extends Seeder
             'owner_id' => $user->id,
         ]);
 
+            
+
         $this->command->info('Created 10 menu items');
 
         // Mark seeder as run
