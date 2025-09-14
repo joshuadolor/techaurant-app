@@ -68,6 +68,7 @@ import PageTitle from "@/components/PageTitle";
 const viewMode = ref("grid");
 import MenuModel from "@/models/Menu";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const {
     items: menus,
@@ -79,6 +80,7 @@ const {
 } = useResourceCrudTable("menus", MenuModel);
 
 const router = useRouter();
+const auth = useAuthStore();
 
 const handlePageChange = (page) => {
     query.page = page;
@@ -99,9 +101,9 @@ onMounted(() => {
 });
 
 const createMenu = () => {
-    router.push({
-        name: "menu.create",
-    });
+    // If user has a current restaurant id on the user model, prefer that
+    const restaurantId = auth.getUser?.restaurant_id || auth.getUser?.restaurantId || 1;
+    router.push({ name: 'menus.editor', params: { restaurantId } });
 };
 
 const editMenu = (menu) => {

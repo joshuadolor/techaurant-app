@@ -40,4 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('common')->group(function () {
         Route::get('/countries', [CountryController::class, 'index']);
     });
+
+    // MVP JSON Menus
+    Route::get('/menus/{restaurantId}', [\App\Resources\Menu\Controllers\JsonMenuController::class, 'show']);
+    Route::put('/menus/{restaurantId}', [\App\Resources\Menu\Controllers\JsonMenuController::class, 'update']);
 });

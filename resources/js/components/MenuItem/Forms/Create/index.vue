@@ -4,14 +4,14 @@
         :rules="rules"
         @loading="isSubmitting = $event"
         :submitForm="handleSubmit"
-        class="menu-item-form"
+        :class="['menu-item-form', { 'dialog-form': inDialog }]"
     >
-        <div class="form-header">
-            <h2 class="form-title">Create Menu Item</h2>
+        <div v-if="!inDialog" class="form-header">
+            <h2 class="form-title gradient-title">Create Menu Item</h2>
             <p class="form-subtitle">Add a new item to your menu</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="form-section">
                 <h3 class="section-title">Basic Information</h3>
                 <div class="grid grid-cols-1 gap-4">
@@ -19,14 +19,6 @@
                         <el-input
                             v-model="form.name"
                             placeholder="e.g., Classic Burger"
-                            size="large"
-                        />
-                    </BaseFormItem>
-
-                    <BaseFormItem label="Slug" prop="slug">
-                        <el-input
-                            v-model="form.slug"
-                            placeholder="classic-burger"
                             size="large"
                         />
                     </BaseFormItem>
@@ -45,7 +37,7 @@
 
             <div class="form-section">
                 <h3 class="section-title">Pricing & Availability</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <BaseFormItem label="Price ($)" prop="price">
                         <el-input
                             v-model.number="form.price"
@@ -75,12 +67,22 @@
                     <BaseFormItem label="Available" prop="is_available">
                         <Switch v-model="form.is_available" active-text="Available" inactive-text="Unavailable" />
                     </BaseFormItem>
+                </div>
+            </div>
 
-                    <BaseFormItem label="Primary Image URL" prop="primary_image_url" class="md:col-span-2">
-                        <el-input
-                            v-model="form.primary_image_url"
-                            placeholder="https://..."
-                            size="large"
+            <!-- Image (mobile-friendly uploader) -->
+            <div class="form-section sm:col-span-2">
+                <h3 class="section-title">Item Image</h3>
+                <div>
+                    <BaseFormItem label="Upload Image" prop="primary_image_url">
+                        <LogoUploader
+                            v-model:logo="form.primary_image_url"
+                            v-model:logoPreview="form.primary_image_url"
+                            uploadText="Tap to upload image"
+                            uploadHint="PNG, JPG up to 2MB"
+                            cropperTitle="Crop Item Image"
+                            imageType="Primary Image"
+                            showTips
                         />
                     </BaseFormItem>
                 </div>
@@ -88,34 +90,48 @@
         </div>
 
         <div class="form-section">
-            <h3 class="section-title">Categorization</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <BaseFormItem label="Category" prop="menu_category_id">
-                    <el-select
-                        v-model="form.menu_category_id"
-                        placeholder="Select a category"
-                        filterable
-                        clearable
-                        :loading="isFetchingMenus"
-                        size="large"
-                        class="w-full"
-                    >
-                        <el-option
-                            v-for="category in categories"
-                            :key="category.uuid || category.id"
-                            :label="category.name"
-                            :value="category.uuid || category.id"
-                        />
-                    </el-select>
-                </BaseFormItem>
+            <h3 class="section-title">Variants (SKUs)</h3>
+            <div class="space-y-4">
+                <el-card v-for="(v, index) in form.skus" :key="index" class="border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <BaseFormItem label="Group" :prop="`skus.${index}.name`">
+                            <el-input v-model="v.name" placeholder="e.g., Size" />
+                        </BaseFormItem>
+                        <BaseFormItem label="Option Label" :prop="`skus.${index}.description`">
+                            <el-input v-model="v.description" placeholder="e.g., Kiddie / Normal / Grande" />
+                        </BaseFormItem>
+                        <BaseFormItem label="SKU Code" :prop="`skus.${index}.sku`">
+                            <el-input v-model="v.sku" placeholder="e.g., HMBR-KID" />
+                        </BaseFormItem>
 
-                <BaseFormItem label="Combo Item" prop="is_combo">
-                    <Switch v-model="form.is_combo" active-text="Combo" inactive-text="Single" />
-                </BaseFormItem>
+                        <BaseFormItem label="Variant Price ($)" :prop="`skus.${index}.price`">
+                            <el-input v-model.number="v.price" type="number" :min="0" :step="0.01" placeholder="Leave blank to use item price" />
+                        </BaseFormItem>
+                        <BaseFormItem label="Active" :prop="`skus.${index}.is_active`">
+                            <Switch v-model="v.is_active" />
+                        </BaseFormItem>
+                        <BaseFormItem label="Available" :prop="`skus.${index}.is_available`">
+                            <Switch v-model="v.is_available" />
+                        </BaseFormItem>
+
+                        <BaseFormItem label="Sort Order" :prop="`skus.${index}.sort_order`">
+                            <el-input v-model.number="v.sort_order" type="number" :min="0" :step="1" />
+                        </BaseFormItem>
+                        <BaseFormItem label="Image URL" :prop="`skus.${index}.primary_image_url`" class="md:col-span-2">
+                            <el-input v-model="v.primary_image_url" placeholder="https://..." />
+                        </BaseFormItem>
+                    </div>
+                    <div class="flex justify-end mt-3">
+                        <el-button type="danger" text @click="removeSku(index)">Remove</el-button>
+                    </div>
+                </el-card>
+                <div class="flex justify-start">
+                    <el-button type="primary" link @click="addSku">+ Add Variant</el-button>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mt-8">
+        <div v-if="!inDialog" class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mt-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <el-button @click="$emit('back')" size="large" class="w-full md:w-auto">
                     Back
@@ -134,11 +150,13 @@ import { reactive, ref, computed, watch } from "vue";
 import Switch from "@/widgets/Switch";
 import { getRules } from "./schema";
 import useApiMethod from "@/composables/useApiMethod";
+import LogoUploader from "@/components/FormElements/LogoUploader/index.vue";
 
 const props = defineProps({
     modelValue: { type: Object, required: true },
     submitText: { type: String, default: "Create Item" },
     submitAction: { type: Function, required: true },
+    inDialog: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["update:modelValue", "back", "submit"]);
@@ -147,42 +165,38 @@ const isSubmitting = ref(false);
 const form = reactive({ ...props.modelValue });
 const rules = computed(() => getRules());
 
-// Auto-generate slug from name
-watch(
-    () => form.name,
-    (val) => {
-        if (!form.slug && val) {
-            form.slug = val
-                .toString()
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, "")
-                .replace(/\s+/g, "-")
-                .replace(/-+/g, "-");
-        }
-    }
-);
+// Initialize variants array
+if (!Array.isArray(form.skus)) {
+    form.skus = [
+        {
+            name: "Size",
+            description: "",
+            sku: "",
+            price: null,
+            is_active: true,
+            is_available: true,
+            sort_order: 0,
+            primary_image_url: "",
+        },
+    ];
+}
 
-// Fetch categories via menus list (categories are eager-loaded on menus)
-const {
-    loading: isFetchingMenus,
-    execute: fetchMenus,
-    data: menus,
-} = useApiMethod({ service: "resource/menus", method: "get" });
-
-const categories = computed(() => {
-    const list = Array.isArray(menus?.value) ? menus.value : [];
-    const set = new Map();
-    list.forEach((menu) => {
-        (menu.categories || []).forEach((cat) => {
-            const key = cat.uuid || cat.id;
-            if (!set.has(key)) set.set(key, cat);
-        });
+const addSku = () => {
+    form.skus.push({
+        name: "Size",
+        description: "",
+        sku: "",
+        price: null,
+        is_active: true,
+        is_available: true,
+        sort_order: 0,
+        primary_image_url: "",
     });
-    return Array.from(set.values());
-});
+};
 
-fetchMenus();
+const removeSku = (index) => {
+    form.skus.splice(index, 1);
+};
 
 const handleSubmit = async (values) => {
     await props.submitAction(values);
@@ -206,8 +220,14 @@ const handleSubmit = async (values) => {
 .form-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #2c3e50;
     margin-bottom: 8px;
+}
+
+.gradient-title {
+    background: linear-gradient(135deg, #f08a5c, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .form-subtitle {

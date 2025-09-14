@@ -3,6 +3,7 @@
 namespace App\Resources\Menu\Models;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,10 @@ class MenuItem extends Model
         'id',
     ];
 
+    protected $with = [
+        'skus',
+    ];
+
     /**
      * Get the owner of the menu item.
      */
@@ -66,6 +71,8 @@ class MenuItem extends Model
             ->withPivot('override_price', 'is_active', 'is_available')
             ->withTimestamps();
     }
+
+    
 
     /**
      * Check if the menu item is a combo item.
@@ -121,5 +128,91 @@ class MenuItem extends Model
     public function availabilities(): MorphMany
     {
         return $this->morphMany(MenuAvailability::class, 'available', 'available_type', 'available_id');
+    }
+
+    public function skus(): HasMany
+    {
+        return $this->hasMany(MenuItemSku::class);
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($menuItem) {
+            if (!$menuItem->slug) {
+                $menuItem->slug = str()->slug($menuItem->name);
+            }
+        });
+
+        // Update SKUs when menu item is updated (diff by uuid)
+        static::updating(function ($menuItem) {
+            if (!request()->has('skus')) {
+                return;
+            }
+
+            $incomingGroups = array_merge([], request()->input('skus', []));
+
+            $existingByUuid = $menuItem->skus()->get()->keyBy('uuid');
+            $keptUuids = [];
+
+            foreach ($incomingGroups as $group) {
+                $groupName = $group['name'] ?? null;
+                $items = $group['items'] ?? [];
+                foreach ($items as $opt) {
+                    $uuid = $opt['uuid'] ?? null;
+                    $attributes = [
+                        'name' => $groupName,
+                        'value' => $opt['value'] ?? null,
+                        'description' => $opt['description'] ?? null,
+                        'sku' => $opt['sku'] ?? null,
+                        'price' => $opt['price'] ?? null,
+                    ];
+
+                    if ($uuid && $existingByUuid->has($uuid)) {
+                        // Update existing SKU
+                        $existingByUuid->get($uuid)->update($attributes);
+                        $keptUuids[] = $uuid;
+                    } else {
+                        // Create new SKU
+                        $menuItem->skus()->create(array_merge($attributes, [
+                            'uuid' => (string) Str::uuid(),
+                        ]));
+                    }
+                }
+            }
+
+            // Delete SKUs that are not present anymore
+            $uuidsToDelete = $existingByUuid->keys()->diff($keptUuids);
+            if ($uuidsToDelete->isNotEmpty()) {
+                $menuItem->skus()->whereIn('uuid', $uuidsToDelete->all())->delete();
+            }
+        });
+
+        // Create related records after restaurant is created
+        static::created(function ($menuItem) {
+            $menuItem->createRelatedRecords($menuItem);
+        });
+    }
+
+    /**
+     * Create related records (contact, config, business hours)
+     */
+    public function createRelatedRecords($menuItem)
+    {
+        // Create skus if provided
+        $groupedSkus = array_merge([], request()->skus ?? []);
+        foreach ($groupedSkus as $groupedSku) {
+            $groupName = $groupedSku['name'];
+            foreach ($groupedSku['items'] as $sku) {
+                $sku = array_merge($sku, [
+                    'name' => $groupName,
+                ]);
+                $this->skus()->create($sku);
+            }
+        }
     }
 }

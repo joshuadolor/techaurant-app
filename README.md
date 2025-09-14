@@ -102,7 +102,7 @@ app/Models/User.php - this should be defined here
 
 [/] - Restaurant Logo update on Restaurant Form
 [/] - Public Website MVP
-[ ] - Menu API
+[ ] - Menu API (on update)
 .
 .
 [ ] - translations

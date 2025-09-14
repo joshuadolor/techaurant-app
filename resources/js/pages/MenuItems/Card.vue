@@ -5,9 +5,9 @@
         @click="navigateToMenuItem"
     >
         <!-- Menu Item Image -->
-        <div class="relative aspect-video rounded-lg overflow-hidden">
+        <div class="relative aspect-square rounded-lg overflow-hidden">
             <el-image
-                :src="item.primaryImageUrl || '/images/menu-item-placeholder.jpg'"
+                :src="item.primaryImageUrl || '/images/menu-item-placeholder.jpg'" 
                 class="w-full h-full"
                 fit="cover"
             >
@@ -150,9 +150,9 @@ const router = useRouter();
 
 const navigateToMenuItem = () => {
     router.push({
-        name: "menu-item.view",
+        name: "menu-items.view",
         params: {
-            id: item.id,
+            id: props.item.id,
         },
     });
 };

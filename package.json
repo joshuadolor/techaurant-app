@@ -21,8 +21,11 @@
         "element-plus": "^2.9.7",
         "pinia": "^3.0.1",
         "quill": "^2.0.3",
+        "survey-core": "^2.3.6",
+        "survey-vue3-ui": "^2.3.6",
         "vue": "^3.5.13",
         "vue-advanced-cropper": "^2.8.9",
+        "vue-draggable-next": "^2.3.0",
         "vue-router": "^4.5.0"
     }
 }

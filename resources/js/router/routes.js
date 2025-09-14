@@ -84,9 +84,20 @@ const routes = [
         component: () => import('@/pages/Menus'),
     },
     {
+        path: '/menus/:restaurantId/editor',
+        name: 'menus.editor',
+        component: () => import('@/pages/Menus/Editor.vue'),
+        props: true,
+    },
+    {
         path: '/menu-categories',
         name: 'menu-categories',
-        component: () => import('@/pages/Menus'),
+        component: () => import('@/pages/MenuCategories'),
+    },
+    {
+        path: '/menu-categories/create',
+        name: 'menu-categories.create',
+        component: () => import('@/pages/MenuCategories/Create'),
     },
     {
         path: '/menu-items',
@@ -97,6 +108,12 @@ const routes = [
         path: '/menu-items/create',
         name: 'menu-items.create',
         component: () => import('@/pages/MenuItems/Create'),
+    },
+    {
+        path: '/menu-items/view/:id',
+        name: 'menu-items.view',
+        component: () => import('@/pages/MenuItems/View.vue'),
+        props: true,
     },
     {
         path: '/tags',

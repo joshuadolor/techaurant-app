@@ -1,0 +1,107 @@
+{
+    "name": "Main Menu",
+    "categories": [
+        {
+            "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+            "name": "Appetizers",
+            "items": [
+                {
+                    "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                    "name": "Caesar Salad",
+                    "price": 6.5,
+                    "description": "A salad with lettuce, tomatoes, and dressing",
+                    "primary_image_url": "https://example.com/caesar-salad.jpg",
+                    "available": true,
+                    "tags": ["Salad", "Healthy", "Vegan", "Best Seller"],
+                    "skus": [{
+                        "name": "Size",
+                        "items": [
+                            {
+                                "uuid": "b97266f6-7304-5e5c-9c3f-769cb7afcd85",
+                                "name": "Small",
+                                "group": "Size",
+                                "price": 6.5,
+                                "description": "Small size",
+                                "available": true,
+                                "sort_order": 1
+                            },
+                            {
+                                "uuid": "ac8800e8-c149-590a-8cd1-e45a8cef1b9b",
+                                "name": "Medium",
+                                "group": "Size",
+                                "price": 6.5,
+                                "description": "Medium size",
+                                "available": true,
+                                "sort_order": 2
+                            },
+                            {
+                                "uuid": "251171e1-961c-5fc4-ab5a-dcdc3c7b2c34",
+                                "name": "Large",    
+                                "group": "Size",
+                                "price": 6.5,
+                                "description": "Large size",
+                                "available": true,
+                                "sort_order": 3
+                            }
+                        ]
+                    }]
+                }
+            ]
+        },
+        {
+            "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+            "name": "Main Courses",
+            "items": [
+                {
+                    "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                    "name": "Sisig with Egg",
+                    "price": 10.5,
+                    "available": true,
+                    "tags": ["Spicy", "Best Seller"],
+                    "primary_image_url": "https://example.com/sisig-with-egg.jpg",
+                    "skus": {
+                        "name": "Size",
+                        "items": [
+                            {
+                                "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                                "name": "Small",
+                                "group": "Size",
+                                "price": 10.5,
+                                "description": "Small size",
+                                "available": true,
+                                "sort_order": 1
+                            },
+                            {
+                                "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                                "name": "Small",
+                                "group": "Size",
+                                "price": 10.5,
+                                "description": "Medium size",
+                                "available": true,
+                                "sort_order": 2
+                            },       
+                            {
+                                "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                                "name": "Small",
+                                "group": "Size",
+                                "price": 10.5,
+                                "description": "Large size",
+                                "available": true,
+                                "sort_order": 3
+                            }
+                        ]
+                    }
+                },
+                {
+                    "uuid": "4a7eaa32-6d60-5e37-8c26-2dc92b6b524e",
+                    "name": "Pork Adobo",
+                    "price": 10.5,
+                    "available": true,
+                    "tags": ["Main Course", "Best Seller"],
+                    "primary_image_url": "https://example.com/pork-adobo.jpg",
+                    "skus": []
+                }
+            ]
+        }
+    ]
+}

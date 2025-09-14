@@ -25,14 +25,14 @@
                 <!-- Hover Overlay -->
                 <div v-if="logoPreview || logo" class="hover-overlay">
                     <el-icon class="hover-icon">
-                        <Plus />
+                        <Picture />
                     </el-icon>
                     <p class="hover-text">Click to update</p>
                 </div>
 
                 <div v-else class="logo-placeholder p-4">
                     <el-icon class="logo-uploader-icon">
-                        <Plus />
+                        <Picture />
                     </el-icon>
                     <p class="upload-text">
                         {{ uploadText }}
@@ -80,7 +80,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { Plus } from "@element-plus/icons-vue";
+import { Plus, Picture } from "@element-plus/icons-vue";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 

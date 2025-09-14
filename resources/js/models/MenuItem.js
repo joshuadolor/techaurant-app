@@ -9,6 +9,10 @@ class MenuItem extends BaseModel {
         this._description = data.description;
         this._price = data.price;
         this._preparation_time = data.preparation_time;
+        this._primary_image_url = data.primary_image_url;
+        this._is_active = data.is_active;
+        this._is_available = data.is_available;
+        this._skus = data.skus;
     }
 
     get name() {
@@ -33,6 +37,18 @@ class MenuItem extends BaseModel {
 
     get isCombo() {
         return this._is_combo;
+    }
+
+    get primaryImageUrl() {
+        return this._primary_image_url;
+    }
+
+    get isActive() {
+        return this._is_active;
+    }
+
+    get skus() {
+        return this._skus || [];
     }
 }
 

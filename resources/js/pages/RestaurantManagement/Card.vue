@@ -5,7 +5,7 @@
         @click="navigateToRestaurant"
     >
         <!-- Restaurant Image/Logo -->
-        <div class="relative aspect-video rounded-lg overflow-hidden">
+        <div class="relative aspect-square rounded-lg overflow-hidden">
             <el-image
                 :src="item.cover_image || item.logoUrl"
                 class="w-full h-full"
