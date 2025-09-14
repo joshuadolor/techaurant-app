@@ -94,6 +94,11 @@ const routes = [
         component: () => import('@/pages/MenuItems'),
     },
     {
+        path: '/menu-items/create',
+        name: 'menu-items.create',
+        component: () => import('@/pages/MenuItems/Create'),
+    },
+    {
         path: '/tags',
         name: 'tags',
         component: () => import('@/pages/Tags'),

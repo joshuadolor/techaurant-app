@@ -59,4 +59,19 @@ return [
         ],
         'searchable' => ['name', 'slug'],
     ],
+    [
+        'name' => 'menu-categories',
+        'controller' => App\Resources\Menu\Controllers\MenuCategoryController::class,
+        'model' => App\Resources\Menu\Models\MenuCategory::class,
+        'validation' => [
+            'store' => [
+                'name' => 'required|string|max:255',
+            ]
+        ],
+        'relationships' => ['owner'],
+        'filterable' => [
+            'owner_id',
+        ],
+        'searchable' => ['name'],
+    ]
 ];

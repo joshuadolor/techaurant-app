@@ -19,8 +19,8 @@
                         </el-radio-group>
                     </div>
 
-                    <el-button type="primary" @click="createMenu">
-                        Create your Menu
+                    <el-button type="primary" @click="createMenuItem">
+                        Create Menu Item
                     </el-button>
                 </div>
             </div>
@@ -98,9 +98,9 @@ onMounted(() => {
     });
 });
 
-const createMenu = () => {
+const createMenuItem = () => {
     router.push({
-        name: "menu.create",
+        name: "menu-items.create",
     });
 };
 
